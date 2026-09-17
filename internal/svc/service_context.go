@@ -19,9 +19,9 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"wf-account-job/ent"
-	"wf-account-job/internal/config"
-	"wf-account-job/internal/mqs/amq/types/periodicconfig"
+	"github.com/wf-platform/wf-account-job/ent"
+	"github.com/wf-platform/wf-account-job/internal/config"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/types/periodicconfig"
 )
 
 type ServiceContext struct {

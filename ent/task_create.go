@@ -6,9 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/wf-platform/wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/ent/tasklog"
 	"time"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"

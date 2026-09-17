@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"log"
 
-	"wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/internal/svc"
 )
 
 type SchedulerTask struct {

@@ -5,7 +5,7 @@ package hook
 import (
 	"context"
 	"fmt"
-	"wf-account-job/ent"
+	"github.com/wf-platform/wf-account-job/ent"
 )
 
 // The RelayChainFunc type is an adapter to allow the use of ordinary

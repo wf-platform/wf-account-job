@@ -5,10 +5,10 @@ package ent
 import (
 	"context"
 	"fmt"
+	"github.com/wf-platform/wf-account-job/ent/predicate"
+	"github.com/wf-platform/wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/ent/tasklog"
 	"math"
-	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"

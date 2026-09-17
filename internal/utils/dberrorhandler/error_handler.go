@@ -7,7 +7,7 @@ import (
 	"github.com/suyuan32/simple-admin-common/i18n"
 	"github.com/suyuan32/simple-admin-common/msg/logmsg"
 
-	"wf-account-job/ent"
+	"github.com/wf-platform/wf-account-job/ent"
 )
 
 // DefaultEntError returns errors dealing with default functions.

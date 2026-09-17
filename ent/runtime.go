@@ -3,12 +3,12 @@
 package ent
 
 import (
+	"github.com/wf-platform/wf-account-job/ent/relaychain"
+	"github.com/wf-platform/wf-account-job/ent/relaytoken"
+	"github.com/wf-platform/wf-account-job/ent/schema"
+	"github.com/wf-platform/wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/ent/tasklog"
 	"time"
-	"wf-account-job/ent/relaychain"
-	"wf-account-job/ent/relaytoken"
-	"wf-account-job/ent/schema"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
 )
 
 // The init function reads all schema descriptors with runtime code

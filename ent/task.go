@@ -4,9 +4,9 @@ package ent
 
 import (
 	"fmt"
+	"github.com/wf-platform/wf-account-job/ent/task"
 	"strings"
 	"time"
-	"wf-account-job/ent/task"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"

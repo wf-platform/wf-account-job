@@ -5,11 +5,11 @@ package enttest
 import (
 	"context"
 
-	"wf-account-job/ent"
+	"github.com/wf-platform/wf-account-job/ent"
 	// required by schema hooks.
-	_ "wf-account-job/ent/runtime"
+	_ "github.com/wf-platform/wf-account-job/ent/runtime"
 
-	"wf-account-job/ent/migrate"
+	"github.com/wf-platform/wf-account-job/ent/migrate"
 
 	"entgo.io/ent/dialect/sql/schema"
 )

@@ -18,14 +18,14 @@ import (
 	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"wf-account-job/ent"
-	"wf-account-job/ent/relaychain"
-	"wf-account-job/ent/relaytoken"
-	"wf-account-job/ent/task"
-	"wf-account-job/internal/enum/taskresult"
-	"wf-account-job/internal/mqs/amq/types/pattern"
-	"wf-account-job/internal/svc"
-	"wf-account-job/internal/utils/dberrorhandler"
+	"github.com/wf-platform/wf-account-job/ent"
+	"github.com/wf-platform/wf-account-job/ent/relaychain"
+	"github.com/wf-platform/wf-account-job/ent/relaytoken"
+	"github.com/wf-platform/wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/internal/enum/taskresult"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/types/pattern"
+	"github.com/wf-platform/wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/internal/utils/dberrorhandler"
 )
 
 const relayNativeZeroAddress = "0x0000000000000000000000000000000000000000"

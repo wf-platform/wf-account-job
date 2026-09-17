@@ -3,7 +3,7 @@ package base
 import (
 	"context"
 
-	"wf-account-job/internal/utils/dberrorhandler"
+	"github.com/wf-platform/wf-account-job/internal/utils/dberrorhandler"
 
 	"entgo.io/ent/dialect/sql/schema"
 	"github.com/suyuan32/simple-admin-common/enum/errorcode"
@@ -11,9 +11,9 @@ import (
 	"github.com/suyuan32/simple-admin-common/msg/logmsg"
 	"github.com/zeromicro/go-zero/core/errorx"
 
-	"wf-account-job/internal/mqs/amq/types/pattern"
-	"wf-account-job/internal/svc"
-	"wf-account-job/types/job"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/types/pattern"
+	"github.com/wf-platform/wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/types/job"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

@@ -3,9 +3,9 @@ package mqtask
 import (
 	"github.com/hibiken/asynq"
 
-	"wf-account-job/internal/mqs/amq/handler/amq/base"
-	"wf-account-job/internal/mqs/amq/handler/amq/relaychains"
-	"wf-account-job/internal/mqs/amq/types/pattern"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/handler/amq/base"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/handler/amq/relaychains"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/types/pattern"
 )
 
 // Register adds task to cron. | 在此处定义任务处理逻辑，注册worker.

@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"entgo.io/ent/dialect/sql"
-	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/relaychain"
-	"wf-account-job/internal/svc"
-	"wf-account-job/internal/utils/dberrorhandler"
-	"wf-account-job/types/job"
+	"github.com/wf-platform/wf-account-job/ent/predicate"
+	"github.com/wf-platform/wf-account-job/ent/relaychain"
+	"github.com/wf-platform/wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/internal/utils/dberrorhandler"
+	"github.com/wf-platform/wf-account-job/types/job"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )

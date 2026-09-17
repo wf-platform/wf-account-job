@@ -10,9 +10,9 @@ import (
 	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"wf-account-job/ent/migrate"
-	"wf-account-job/internal/svc"
-	"wf-account-job/types/job"
+	"github.com/wf-platform/wf-account-job/ent/migrate"
+	"github.com/wf-platform/wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/types/job"
 )
 
 type InitRelayTablesLogic struct {

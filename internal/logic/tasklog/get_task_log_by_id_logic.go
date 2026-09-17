@@ -3,9 +3,9 @@ package tasklog
 import (
 	"context"
 
-	"wf-account-job/internal/svc"
-	"wf-account-job/internal/utils/dberrorhandler"
-	"wf-account-job/types/job"
+	"github.com/wf-platform/wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/internal/utils/dberrorhandler"
+	"github.com/wf-platform/wf-account-job/types/job"
 
 	"github.com/suyuan32/simple-admin-common/utils/pointy"
 	"github.com/zeromicro/go-zero/core/logx"

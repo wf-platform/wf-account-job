@@ -6,7 +6,7 @@ import (
 
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"wf-account-job/ent"
+	"github.com/wf-platform/wf-account-job/ent"
 )
 
 // WithTx uses transaction in ent.

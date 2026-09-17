@@ -9,12 +9,12 @@ import (
 	"log"
 	"reflect"
 
-	"wf-account-job/ent/migrate"
+	"github.com/wf-platform/wf-account-job/ent/migrate"
 
-	"wf-account-job/ent/relaychain"
-	"wf-account-job/ent/relaytoken"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
+	"github.com/wf-platform/wf-account-job/ent/relaychain"
+	"github.com/wf-platform/wf-account-job/ent/relaytoken"
+	"github.com/wf-platform/wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/ent/tasklog"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"

@@ -6,7 +6,7 @@ package jobclient
 import (
 	"context"
 
-	"wf-account-job/types/job"
+	"github.com/wf-platform/wf-account-job/types/job"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"

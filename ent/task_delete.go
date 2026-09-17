@@ -4,8 +4,8 @@ package ent
 
 import (
 	"context"
-	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/ent/predicate"
+	"github.com/wf-platform/wf-account-job/ent/task"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

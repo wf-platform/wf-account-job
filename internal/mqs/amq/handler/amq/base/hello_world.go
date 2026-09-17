@@ -11,15 +11,15 @@ import (
 	"github.com/zeromicro/go-zero/core/errorx"
 	"github.com/zeromicro/go-zero/core/logx"
 
-	"wf-account-job/ent/task"
-	"wf-account-job/internal/enum/taskresult"
-	"wf-account-job/internal/mqs/amq/types/pattern"
-	"wf-account-job/internal/utils/dberrorhandler"
+	"github.com/wf-platform/wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/internal/enum/taskresult"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/types/pattern"
+	"github.com/wf-platform/wf-account-job/internal/utils/dberrorhandler"
 
 	"github.com/hibiken/asynq"
 
-	"wf-account-job/internal/mqs/amq/types/payload"
-	"wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/types/payload"
+	"github.com/wf-platform/wf-account-job/internal/svc"
 )
 
 type HelloWorldHandler struct {

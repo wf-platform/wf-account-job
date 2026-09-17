@@ -23,8 +23,8 @@ import (
 	"github.com/hibiken/asynq"
 	"github.com/suyuan32/simple-admin-common/enum/common"
 
-	"wf-account-job/ent"
-	"wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/ent"
+	"github.com/wf-platform/wf-account-job/ent/task"
 )
 
 type EntConfigProvider struct {

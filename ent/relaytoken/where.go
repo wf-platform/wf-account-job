@@ -3,8 +3,8 @@
 package relaytoken
 
 import (
+	"github.com/wf-platform/wf-account-job/ent/predicate"
 	"time"
-	"wf-account-job/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"

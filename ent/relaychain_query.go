@@ -6,10 +6,10 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
+	"github.com/wf-platform/wf-account-job/ent/predicate"
+	"github.com/wf-platform/wf-account-job/ent/relaychain"
+	"github.com/wf-platform/wf-account-job/ent/relaytoken"
 	"math"
-	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/relaychain"
-	"wf-account-job/ent/relaytoken"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"

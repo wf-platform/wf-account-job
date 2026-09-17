@@ -7,12 +7,12 @@ package server
 import (
 	"context"
 
-	"wf-account-job/internal/logic/base"
-	"wf-account-job/internal/logic/relay"
-	"wf-account-job/internal/logic/task"
-	"wf-account-job/internal/logic/tasklog"
-	"wf-account-job/internal/svc"
-	"wf-account-job/types/job"
+	"github.com/wf-platform/wf-account-job/internal/logic/base"
+	"github.com/wf-platform/wf-account-job/internal/logic/relay"
+	"github.com/wf-platform/wf-account-job/internal/logic/task"
+	"github.com/wf-platform/wf-account-job/internal/logic/tasklog"
+	"github.com/wf-platform/wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/types/job"
 )
 
 type JobServer struct {

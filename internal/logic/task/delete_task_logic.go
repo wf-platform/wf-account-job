@@ -3,13 +3,13 @@ package task
 import (
 	"context"
 
-	"wf-account-job/ent"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
-	"wf-account-job/internal/svc"
-	"wf-account-job/internal/utils/dberrorhandler"
-	"wf-account-job/internal/utils/entx"
-	"wf-account-job/types/job"
+	"github.com/wf-platform/wf-account-job/ent"
+	"github.com/wf-platform/wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/ent/tasklog"
+	"github.com/wf-platform/wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/internal/utils/dberrorhandler"
+	"github.com/wf-platform/wf-account-job/internal/utils/entx"
+	"github.com/wf-platform/wf-account-job/types/job"
 
 	"github.com/suyuan32/simple-admin-common/i18n"
 	"github.com/zeromicro/go-zero/core/logx"

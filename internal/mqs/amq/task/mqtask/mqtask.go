@@ -21,7 +21,7 @@ import (
 
 	"github.com/hibiken/asynq"
 
-	"wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/internal/svc"
 )
 
 type MQTask struct {

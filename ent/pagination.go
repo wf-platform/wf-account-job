@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
+	"github.com/wf-platform/wf-account-job/ent/task"
+	"github.com/wf-platform/wf-account-job/ent/tasklog"
 )
 
 const errInvalidPage = "INVALID_PAGE"

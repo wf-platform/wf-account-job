@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in wf-account-job/ent/runtime.go
+// The schema-stitching logic is generated in github.com/wf-platform/wf-account-job/ent/runtime.go
 
 const (
 	Version = "v0.14.6"                                         // Version of ent codegen.

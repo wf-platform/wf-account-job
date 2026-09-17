@@ -3,7 +3,7 @@ package scheduletask
 import (
 	"github.com/hibiken/asynq"
 
-	"wf-account-job/internal/mqs/amq/types/pattern"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/types/pattern"
 )
 
 // Register adds task to cron. | 在此处定义定时任务

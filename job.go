@@ -24,14 +24,14 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 
-	"wf-account-job/internal/config"
-	"wf-account-job/internal/envloader"
-	"wf-account-job/internal/mqs/amq/task/dynamicperiodictask"
-	"wf-account-job/internal/mqs/amq/task/mqtask"
-	"wf-account-job/internal/mqs/amq/task/scheduletask"
-	"wf-account-job/internal/server"
-	"wf-account-job/internal/svc"
-	"wf-account-job/types/job"
+	"github.com/wf-platform/wf-account-job/internal/config"
+	"github.com/wf-platform/wf-account-job/internal/envloader"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/task/dynamicperiodictask"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/task/mqtask"
+	"github.com/wf-platform/wf-account-job/internal/mqs/amq/task/scheduletask"
+	"github.com/wf-platform/wf-account-job/internal/server"
+	"github.com/wf-platform/wf-account-job/internal/svc"
+	"github.com/wf-platform/wf-account-job/types/job"
 )
 
 var configFile = flag.String("f", "", "the config file; defaults to the APP_ENV profile")

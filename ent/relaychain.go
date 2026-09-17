@@ -4,9 +4,9 @@ package ent
 
 import (
 	"fmt"
+	"github.com/wf-platform/wf-account-job/ent/relaychain"
 	"strings"
 	"time"
-	"wf-account-job/ent/relaychain"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"

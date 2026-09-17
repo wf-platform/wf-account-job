@@ -1,8 +1,8 @@
 package relay
 
 import (
-	"wf-account-job/ent"
-	"wf-account-job/types/job"
+	"github.com/wf-platform/wf-account-job/ent"
+	"github.com/wf-platform/wf-account-job/types/job"
 
 	"github.com/suyuan32/simple-admin-common/utils/pointy"
 )
