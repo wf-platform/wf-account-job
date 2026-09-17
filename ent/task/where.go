@@ -4,10 +4,10 @@ package task
 
 import (
 	"time"
+	"wf-account-job/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"wf-account-job/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

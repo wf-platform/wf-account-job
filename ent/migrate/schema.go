@@ -9,6 +9,87 @@ import (
 )
 
 var (
+	// RelayChainColumns holds the columns for the "relay_chain" table.
+	RelayChainColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "Relay chain id | Relay 返回的链 ID"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "Relay original chain slug | Relay 原始链标识"},
+		{Name: "name", Type: field.TypeString, Comment: "Chain display name | 链展示名称"},
+		{Name: "logo_url", Type: field.TypeString, Nullable: true, Comment: "Chain logo URL | 链 logo 地址"},
+		{Name: "type", Type: field.TypeString, Comment: "Chain type | 链类型", Default: "evm"},
+		{Name: "vm_type", Type: field.TypeString, Nullable: true, Comment: "Relay vmType | Relay 返回的 vmType"},
+		{Name: "protocol", Type: field.TypeString, Nullable: true, Comment: "Relay protocol | Relay 返回的 protocol"},
+		{Name: "base_chain_id", Type: field.TypeString, Nullable: true, Comment: "Relay baseChainId | Relay 返回的 baseChainId"},
+		{Name: "explorer_url", Type: field.TypeString, Nullable: true, Comment: "Explorer URL | 区块浏览器地址"},
+		{Name: "explorer_name", Type: field.TypeString, Nullable: true, Comment: "Explorer name | 区块浏览器名称"},
+		{Name: "rpc_url", Type: field.TypeString, Nullable: true, Comment: "HTTP RPC URL | HTTP RPC 地址"},
+		{Name: "ws_rpc_url", Type: field.TypeString, Nullable: true, Comment: "WebSocket RPC URL | WebSocket RPC 地址"},
+		{Name: "native_symbol", Type: field.TypeString, Nullable: true, Comment: "Native token symbol | 原生币符号"},
+		{Name: "native_decimals", Type: field.TypeInt, Comment: "Native token decimals | 原生币精度", Default: 0},
+		{Name: "deposit_enabled", Type: field.TypeBool, Comment: "Whether Relay deposit is enabled | Relay 是否允许该链充值", Default: false},
+		{Name: "token_support", Type: field.TypeString, Nullable: true, Comment: "Relay token support strategy | Relay 返回的 token 支持策略"},
+		{Name: "disabled", Type: field.TypeBool, Comment: "Whether Relay disabled this chain | Relay 是否已禁用该链", Default: false},
+		{Name: "supported", Type: field.TypeBool, Comment: "Whether Relay still supports this chain | Relay 当前是否还支持这条链", Default: true},
+		{Name: "enabled", Type: field.TypeBool, Comment: "Whether platform enables this chain | 平台是否启用这条链", Default: true},
+		{Name: "raw_data", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "Raw Relay chain payload | Relay 原始返回数据"},
+		{Name: "created_at", Type: field.TypeTime, Comment: "Create time | 创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "Update time | 更新时间"},
+	}
+	// RelayChainTable holds the schema information for the "relay_chain" table.
+	RelayChainTable = &schema.Table{
+		Name:       "relay_chain",
+		Comment:    "Relay chain table | Relay 链信息表",
+		Columns:    RelayChainColumns,
+		PrimaryKey: []*schema.Column{RelayChainColumns[0]},
+	}
+	// RelayTokenColumns holds the columns for the "relay_token" table.
+	RelayTokenColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token_id", Type: field.TypeString, Comment: "Relay token id | Relay 返回的 Token 唯一标识"},
+		{Name: "address", Type: field.TypeString, Comment: "Token contract address | Token 合约地址"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "Token name | Token 名称"},
+		{Name: "symbol", Type: field.TypeString, Comment: "Token symbol | Token 符号"},
+		{Name: "logo_url", Type: field.TypeString, Nullable: true, Comment: "Token logo URL | Token logo 地址"},
+		{Name: "decimals", Type: field.TypeInt, Comment: "Token decimals | Token 精度"},
+		{Name: "native", Type: field.TypeBool, Comment: "Whether token is native | 是否为链原生币", Default: false},
+		{Name: "stablecoin", Type: field.TypeBool, Comment: "Whether token is a stablecoin | 是否稳定币", Default: false},
+		{Name: "supports_bridging", Type: field.TypeBool, Comment: "Whether Relay supports bridging | Relay 是否支持桥接", Default: false},
+		{Name: "supports_permit", Type: field.TypeBool, Comment: "Whether Relay supports permit | Relay 是否支持 permit", Default: false},
+		{Name: "is_featured", Type: field.TypeBool, Comment: "Whether token appears in featuredTokens | 是否出现在 featuredTokens", Default: false},
+		{Name: "is_solver", Type: field.TypeBool, Comment: "Whether token appears in solverCurrencies | 是否出现在 solverCurrencies", Default: false},
+		{Name: "is_erc20", Type: field.TypeBool, Comment: "Whether token appears in erc20Currencies | 是否出现在 erc20Currencies", Default: false},
+		{Name: "supported", Type: field.TypeBool, Comment: "Whether Relay still supports this token | Relay 当前是否还支持这个币", Default: true},
+		{Name: "raw_data", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "Normalized Relay token snapshot | Relay 归一化后的 Token 快照"},
+		{Name: "created_at", Type: field.TypeTime, Comment: "Create time | 创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "Update time | 更新时间"},
+		{Name: "chain_id", Type: field.TypeInt64, Comment: "Relay chain id | 所属链 ID"},
+	}
+	// RelayTokenTable holds the schema information for the "relay_token" table.
+	RelayTokenTable = &schema.Table{
+		Name:       "relay_token",
+		Comment:    "Relay token table | Relay Token 信息表",
+		Columns:    RelayTokenColumns,
+		PrimaryKey: []*schema.Column{RelayTokenColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "relay_token_relay_chain_tokens",
+				Columns:    []*schema.Column{RelayTokenColumns[18]},
+				RefColumns: []*schema.Column{RelayChainColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "relaytoken_token_id_chain_id",
+				Unique:  true,
+				Columns: []*schema.Column{RelayTokenColumns[1], RelayTokenColumns[18]},
+			},
+			{
+				Name:    "relaytoken_chain_id_address",
+				Unique:  true,
+				Columns: []*schema.Column{RelayTokenColumns[18], RelayTokenColumns[2]},
+			},
+		},
+	}
 	// SysTasksColumns holds the columns for the "sys_tasks" table.
 	SysTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint64, Increment: true},
@@ -60,12 +141,21 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		RelayChainTable,
+		RelayTokenTable,
 		SysTasksTable,
 		SysTaskLogsTable,
 	}
 )
 
 func init() {
+	RelayChainTable.Annotation = &entsql.Annotation{
+		Table: "relay_chain",
+	}
+	RelayTokenTable.ForeignKeys[0].RefTable = RelayChainTable
+	RelayTokenTable.Annotation = &entsql.Annotation{
+		Table: "relay_token",
+	}
 	SysTasksTable.Annotation = &entsql.Annotation{
 		Table: "sys_tasks",
 	}

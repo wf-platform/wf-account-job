@@ -11,14 +11,15 @@ import (
 
 	"wf-account-job/ent/migrate"
 
+	"wf-account-job/ent/relaychain"
+	"wf-account-job/ent/relaytoken"
+	"wf-account-job/ent/task"
+	"wf-account-job/ent/tasklog"
+
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
-
-	stdsql "database/sql"
 )
 
 // Client is the client that holds all ent builders.
@@ -26,6 +27,10 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// RelayChain is the client for interacting with the RelayChain builders.
+	RelayChain *RelayChainClient
+	// RelayToken is the client for interacting with the RelayToken builders.
+	RelayToken *RelayTokenClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// TaskLog is the client for interacting with the TaskLog builders.
@@ -41,6 +46,8 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.RelayChain = NewRelayChainClient(c.config)
+	c.RelayToken = NewRelayTokenClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.TaskLog = NewTaskLogClient(c.config)
 }
@@ -133,10 +140,12 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:     ctx,
-		config:  cfg,
-		Task:    NewTaskClient(cfg),
-		TaskLog: NewTaskLogClient(cfg),
+		ctx:        ctx,
+		config:     cfg,
+		RelayChain: NewRelayChainClient(cfg),
+		RelayToken: NewRelayTokenClient(cfg),
+		Task:       NewTaskClient(cfg),
+		TaskLog:    NewTaskLogClient(cfg),
 	}, nil
 }
 
@@ -154,17 +163,19 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:     ctx,
-		config:  cfg,
-		Task:    NewTaskClient(cfg),
-		TaskLog: NewTaskLogClient(cfg),
+		ctx:        ctx,
+		config:     cfg,
+		RelayChain: NewRelayChainClient(cfg),
+		RelayToken: NewRelayTokenClient(cfg),
+		Task:       NewTaskClient(cfg),
+		TaskLog:    NewTaskLogClient(cfg),
 	}, nil
 }
 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Task.
+//		RelayChain.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -186,6 +197,8 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
+	c.RelayChain.Use(hooks...)
+	c.RelayToken.Use(hooks...)
 	c.Task.Use(hooks...)
 	c.TaskLog.Use(hooks...)
 }
@@ -193,6 +206,8 @@ func (c *Client) Use(hooks ...Hook) {
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
+	c.RelayChain.Intercept(interceptors...)
+	c.RelayToken.Intercept(interceptors...)
 	c.Task.Intercept(interceptors...)
 	c.TaskLog.Intercept(interceptors...)
 }
@@ -200,12 +215,314 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *RelayChainMutation:
+		return c.RelayChain.mutate(ctx, m)
+	case *RelayTokenMutation:
+		return c.RelayToken.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
 	case *TaskLogMutation:
 		return c.TaskLog.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// RelayChainClient is a client for the RelayChain schema.
+type RelayChainClient struct {
+	config
+}
+
+// NewRelayChainClient returns a client for the RelayChain from the given config.
+func NewRelayChainClient(c config) *RelayChainClient {
+	return &RelayChainClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `relaychain.Hooks(f(g(h())))`.
+func (c *RelayChainClient) Use(hooks ...Hook) {
+	c.hooks.RelayChain = append(c.hooks.RelayChain, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `relaychain.Intercept(f(g(h())))`.
+func (c *RelayChainClient) Intercept(interceptors ...Interceptor) {
+	c.inters.RelayChain = append(c.inters.RelayChain, interceptors...)
+}
+
+// Create returns a builder for creating a RelayChain entity.
+func (c *RelayChainClient) Create() *RelayChainCreate {
+	mutation := newRelayChainMutation(c.config, OpCreate)
+	return &RelayChainCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RelayChain entities.
+func (c *RelayChainClient) CreateBulk(builders ...*RelayChainCreate) *RelayChainCreateBulk {
+	return &RelayChainCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RelayChainClient) MapCreateBulk(slice any, setFunc func(*RelayChainCreate, int)) *RelayChainCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RelayChainCreateBulk{err: fmt.Errorf("calling to RelayChainClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RelayChainCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RelayChainCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RelayChain.
+func (c *RelayChainClient) Update() *RelayChainUpdate {
+	mutation := newRelayChainMutation(c.config, OpUpdate)
+	return &RelayChainUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RelayChainClient) UpdateOne(_m *RelayChain) *RelayChainUpdateOne {
+	mutation := newRelayChainMutation(c.config, OpUpdateOne, withRelayChain(_m))
+	return &RelayChainUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RelayChainClient) UpdateOneID(id int64) *RelayChainUpdateOne {
+	mutation := newRelayChainMutation(c.config, OpUpdateOne, withRelayChainID(id))
+	return &RelayChainUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RelayChain.
+func (c *RelayChainClient) Delete() *RelayChainDelete {
+	mutation := newRelayChainMutation(c.config, OpDelete)
+	return &RelayChainDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RelayChainClient) DeleteOne(_m *RelayChain) *RelayChainDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RelayChainClient) DeleteOneID(id int64) *RelayChainDeleteOne {
+	builder := c.Delete().Where(relaychain.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RelayChainDeleteOne{builder}
+}
+
+// Query returns a query builder for RelayChain.
+func (c *RelayChainClient) Query() *RelayChainQuery {
+	return &RelayChainQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRelayChain},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a RelayChain entity by its id.
+func (c *RelayChainClient) Get(ctx context.Context, id int64) (*RelayChain, error) {
+	return c.Query().Where(relaychain.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RelayChainClient) GetX(ctx context.Context, id int64) *RelayChain {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryTokens queries the tokens edge of a RelayChain.
+func (c *RelayChainClient) QueryTokens(_m *RelayChain) *RelayTokenQuery {
+	query := (&RelayTokenClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(relaychain.Table, relaychain.FieldID, id),
+			sqlgraph.To(relaytoken.Table, relaytoken.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, relaychain.TokensTable, relaychain.TokensColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RelayChainClient) Hooks() []Hook {
+	return c.hooks.RelayChain
+}
+
+// Interceptors returns the client interceptors.
+func (c *RelayChainClient) Interceptors() []Interceptor {
+	return c.inters.RelayChain
+}
+
+func (c *RelayChainClient) mutate(ctx context.Context, m *RelayChainMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RelayChainCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RelayChainUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RelayChainUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RelayChainDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown RelayChain mutation op: %q", m.Op())
+	}
+}
+
+// RelayTokenClient is a client for the RelayToken schema.
+type RelayTokenClient struct {
+	config
+}
+
+// NewRelayTokenClient returns a client for the RelayToken from the given config.
+func NewRelayTokenClient(c config) *RelayTokenClient {
+	return &RelayTokenClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `relaytoken.Hooks(f(g(h())))`.
+func (c *RelayTokenClient) Use(hooks ...Hook) {
+	c.hooks.RelayToken = append(c.hooks.RelayToken, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `relaytoken.Intercept(f(g(h())))`.
+func (c *RelayTokenClient) Intercept(interceptors ...Interceptor) {
+	c.inters.RelayToken = append(c.inters.RelayToken, interceptors...)
+}
+
+// Create returns a builder for creating a RelayToken entity.
+func (c *RelayTokenClient) Create() *RelayTokenCreate {
+	mutation := newRelayTokenMutation(c.config, OpCreate)
+	return &RelayTokenCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of RelayToken entities.
+func (c *RelayTokenClient) CreateBulk(builders ...*RelayTokenCreate) *RelayTokenCreateBulk {
+	return &RelayTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *RelayTokenClient) MapCreateBulk(slice any, setFunc func(*RelayTokenCreate, int)) *RelayTokenCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &RelayTokenCreateBulk{err: fmt.Errorf("calling to RelayTokenClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*RelayTokenCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &RelayTokenCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for RelayToken.
+func (c *RelayTokenClient) Update() *RelayTokenUpdate {
+	mutation := newRelayTokenMutation(c.config, OpUpdate)
+	return &RelayTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *RelayTokenClient) UpdateOne(_m *RelayToken) *RelayTokenUpdateOne {
+	mutation := newRelayTokenMutation(c.config, OpUpdateOne, withRelayToken(_m))
+	return &RelayTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *RelayTokenClient) UpdateOneID(id int) *RelayTokenUpdateOne {
+	mutation := newRelayTokenMutation(c.config, OpUpdateOne, withRelayTokenID(id))
+	return &RelayTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for RelayToken.
+func (c *RelayTokenClient) Delete() *RelayTokenDelete {
+	mutation := newRelayTokenMutation(c.config, OpDelete)
+	return &RelayTokenDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *RelayTokenClient) DeleteOne(_m *RelayToken) *RelayTokenDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *RelayTokenClient) DeleteOneID(id int) *RelayTokenDeleteOne {
+	builder := c.Delete().Where(relaytoken.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &RelayTokenDeleteOne{builder}
+}
+
+// Query returns a query builder for RelayToken.
+func (c *RelayTokenClient) Query() *RelayTokenQuery {
+	return &RelayTokenQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeRelayToken},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a RelayToken entity by its id.
+func (c *RelayTokenClient) Get(ctx context.Context, id int) (*RelayToken, error) {
+	return c.Query().Where(relaytoken.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *RelayTokenClient) GetX(ctx context.Context, id int) *RelayToken {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryChain queries the chain edge of a RelayToken.
+func (c *RelayTokenClient) QueryChain(_m *RelayToken) *RelayChainQuery {
+	query := (&RelayChainClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(relaytoken.Table, relaytoken.FieldID, id),
+			sqlgraph.To(relaychain.Table, relaychain.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, relaytoken.ChainTable, relaytoken.ChainColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *RelayTokenClient) Hooks() []Hook {
+	return c.hooks.RelayToken
+}
+
+// Interceptors returns the client interceptors.
+func (c *RelayTokenClient) Interceptors() []Interceptor {
+	return c.inters.RelayToken
+}
+
+func (c *RelayTokenClient) mutate(ctx context.Context, m *RelayTokenMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&RelayTokenCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&RelayTokenUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&RelayTokenUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&RelayTokenDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown RelayToken mutation op: %q", m.Op())
 	}
 }
 
@@ -510,33 +827,9 @@ func (c *TaskLogClient) mutate(ctx context.Context, m *TaskLogMutation) (Value, 
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Task, TaskLog []ent.Hook
+		RelayChain, RelayToken, Task, TaskLog []ent.Hook
 	}
 	inters struct {
-		Task, TaskLog []ent.Interceptor
+		RelayChain, RelayToken, Task, TaskLog []ent.Interceptor
 	}
 )
-
-// ExecContext allows calling the underlying ExecContext method of the driver if it is supported by it.
-// See, database/sql#DB.ExecContext for more information.
-func (c *config) ExecContext(ctx context.Context, query string, args ...any) (stdsql.Result, error) {
-	ex, ok := c.driver.(interface {
-		ExecContext(context.Context, string, ...any) (stdsql.Result, error)
-	})
-	if !ok {
-		return nil, fmt.Errorf("Driver.ExecContext is not supported")
-	}
-	return ex.ExecContext(ctx, query, args...)
-}
-
-// QueryContext allows calling the underlying QueryContext method of the driver if it is supported by it.
-// See, database/sql#DB.QueryContext for more information.
-func (c *config) QueryContext(ctx context.Context, query string, args ...any) (*stdsql.Rows, error) {
-	q, ok := c.driver.(interface {
-		QueryContext(context.Context, string, ...any) (*stdsql.Rows, error)
-	})
-	if !ok {
-		return nil, fmt.Errorf("Driver.QueryContext is not supported")
-	}
-	return q.QueryContext(ctx, query, args...)
-}

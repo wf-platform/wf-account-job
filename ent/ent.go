@@ -8,12 +8,14 @@ import (
 	"fmt"
 	"reflect"
 	"sync"
+	"wf-account-job/ent/relaychain"
+	"wf-account-job/ent/relaytoken"
+	"wf-account-job/ent/task"
+	"wf-account-job/ent/tasklog"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -74,8 +76,10 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			task.Table:    task.ValidColumn,
-			tasklog.Table: tasklog.ValidColumn,
+			relaychain.Table: relaychain.ValidColumn,
+			relaytoken.Table: relaytoken.ValidColumn,
+			task.Table:       task.ValidColumn,
+			tasklog.Table:    tasklog.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

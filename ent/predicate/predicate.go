@@ -6,6 +6,12 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// RelayChain is the predicate function for relaychain builders.
+type RelayChain func(*sql.Selector)
+
+// RelayToken is the predicate function for relaytoken builders.
+type RelayToken func(*sql.Selector)
+
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)
 

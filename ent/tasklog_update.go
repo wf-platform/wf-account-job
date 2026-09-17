@@ -7,13 +7,13 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"wf-account-job/ent/predicate"
+	"wf-account-job/ent/task"
+	"wf-account-job/ent/tasklog"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
 )
 
 // TaskLogUpdate is the builder for updating TaskLog entities.

@@ -5,33 +5,33 @@ package ent
 import (
 	"context"
 	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/task"
+	"wf-account-job/ent/relaychain"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 )
 
-// TaskDelete is the builder for deleting a Task entity.
-type TaskDelete struct {
+// RelayChainDelete is the builder for deleting a RelayChain entity.
+type RelayChainDelete struct {
 	config
 	hooks    []Hook
-	mutation *TaskMutation
+	mutation *RelayChainMutation
 }
 
-// Where appends a list predicates to the TaskDelete builder.
-func (_d *TaskDelete) Where(ps ...predicate.Task) *TaskDelete {
+// Where appends a list predicates to the RelayChainDelete builder.
+func (_d *RelayChainDelete) Where(ps ...predicate.RelayChain) *RelayChainDelete {
 	_d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (_d *TaskDelete) Exec(ctx context.Context) (int, error) {
+func (_d *RelayChainDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, _d.sqlExec, _d.mutation, _d.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *TaskDelete) ExecX(ctx context.Context) int {
+func (_d *RelayChainDelete) ExecX(ctx context.Context) int {
 	n, err := _d.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (_d *TaskDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (_d *TaskDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(task.Table, sqlgraph.NewFieldSpec(task.FieldID, field.TypeUint64))
+func (_d *RelayChainDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(relaychain.Table, sqlgraph.NewFieldSpec(relaychain.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (_d *TaskDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// TaskDeleteOne is the builder for deleting a single Task entity.
-type TaskDeleteOne struct {
-	_d *TaskDelete
+// RelayChainDeleteOne is the builder for deleting a single RelayChain entity.
+type RelayChainDeleteOne struct {
+	_d *RelayChainDelete
 }
 
-// Where appends a list predicates to the TaskDelete builder.
-func (_d *TaskDeleteOne) Where(ps ...predicate.Task) *TaskDeleteOne {
+// Where appends a list predicates to the RelayChainDelete builder.
+func (_d *RelayChainDeleteOne) Where(ps ...predicate.RelayChain) *RelayChainDeleteOne {
 	_d._d.mutation.Where(ps...)
 	return _d
 }
 
 // Exec executes the deletion query.
-func (_d *TaskDeleteOne) Exec(ctx context.Context) error {
+func (_d *RelayChainDeleteOne) Exec(ctx context.Context) error {
 	n, err := _d._d.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{task.Label}
+		return &NotFoundError{relaychain.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (_d *TaskDeleteOne) ExecX(ctx context.Context) {
+func (_d *RelayChainDeleteOne) ExecX(ctx context.Context) {
 	if err := _d.Exec(ctx); err != nil {
 		panic(err)
 	}

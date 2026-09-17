@@ -4,6 +4,7 @@ import (
 	"github.com/hibiken/asynq"
 
 	"wf-account-job/internal/mqs/amq/handler/amq/base"
+	"wf-account-job/internal/mqs/amq/handler/amq/relaychains"
 	"wf-account-job/internal/mqs/amq/types/pattern"
 )
 
@@ -13,6 +14,7 @@ func (m *MQTask) Register() {
 
 	// define the handler | 定义处理逻辑
 	mux.Handle(pattern.RecordHelloWorld, base.NewHelloWorldHandler(m.svcCtx))
+	mux.Handle(pattern.RelayChains, relaychains.NewHandler(m.svcCtx))
 
 	m.mux = mux
 }

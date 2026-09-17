@@ -9,8 +9,9 @@ import (
 	// required by schema hooks.
 	_ "wf-account-job/ent/runtime"
 
-	"entgo.io/ent/dialect/sql/schema"
 	"wf-account-job/ent/migrate"
+
+	"entgo.io/ent/dialect/sql/schema"
 )
 
 type (

@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"wf-account-job/internal/logic/base"
+	"wf-account-job/internal/logic/relay"
 	"wf-account-job/internal/logic/task"
 	"wf-account-job/internal/logic/tasklog"
 	"wf-account-job/internal/svc"
@@ -27,6 +28,11 @@ func NewJobServer(svcCtx *svc.ServiceContext) *JobServer {
 func (s *JobServer) InitDatabase(ctx context.Context, in *job.Empty) (*job.BaseResp, error) {
 	l := base.NewInitDatabaseLogic(ctx, s.svcCtx)
 	return l.InitDatabase(in)
+}
+
+func (s *JobServer) InitRelayTables(ctx context.Context, in *job.Empty) (*job.BaseResp, error) {
+	l := base.NewInitRelayTablesLogic(ctx, s.svcCtx)
+	return l.InitRelayTables(in)
 }
 
 // Task management
@@ -79,4 +85,26 @@ func (s *JobServer) GetTaskLogById(ctx context.Context, in *job.IDReq) (*job.Tas
 func (s *JobServer) DeleteTaskLog(ctx context.Context, in *job.IDsReq) (*job.BaseResp, error) {
 	l := tasklog.NewDeleteTaskLogLogic(ctx, s.svcCtx)
 	return l.DeleteTaskLog(in)
+}
+
+// RelayChain query
+func (s *JobServer) GetRelayChainList(ctx context.Context, in *job.RelayChainListReq) (*job.RelayChainListResp, error) {
+	l := relay.NewGetRelayChainListLogic(ctx, s.svcCtx)
+	return l.GetRelayChainList(in)
+}
+
+func (s *JobServer) GetRelayChainById(ctx context.Context, in *job.RelayChainIDReq) (*job.RelayChainInfo, error) {
+	l := relay.NewGetRelayChainByIdLogic(ctx, s.svcCtx)
+	return l.GetRelayChainById(in)
+}
+
+// RelayToken query
+func (s *JobServer) GetRelayTokenList(ctx context.Context, in *job.RelayTokenListReq) (*job.RelayTokenListResp, error) {
+	l := relay.NewGetRelayTokenListLogic(ctx, s.svcCtx)
+	return l.GetRelayTokenList(in)
+}
+
+func (s *JobServer) GetRelayTokenByChainAndId(ctx context.Context, in *job.RelayTokenKeyReq) (*job.RelayTokenInfo, error) {
+	l := relay.NewGetRelayTokenByChainAndIdLogic(ctx, s.svcCtx)
+	return l.GetRelayTokenByChainAndId(in)
 }

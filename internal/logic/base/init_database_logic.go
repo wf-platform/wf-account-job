@@ -71,5 +71,17 @@ func (l *InitDatabaseLogic) insertTaskData() error {
 		return err
 	}
 
+	err = l.svcCtx.DB.Task.Create().
+		SetName("relay_chains").
+		SetTaskGroup("relay").
+		SetCronExpression("@every 24h").
+		SetPattern(pattern.RelayChains).
+		SetPayload("{}").
+		Exec(l.ctx)
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

@@ -7,14 +7,14 @@ import (
 	"database/sql/driver"
 	"fmt"
 	"math"
+	"wf-account-job/ent/predicate"
+	"wf-account-job/ent/task"
+	"wf-account-job/ent/tasklog"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
 )
 
 // TaskQuery is the builder for querying Task entities.

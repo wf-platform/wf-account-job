@@ -8,12 +8,14 @@ import (
 	"fmt"
 	"sync"
 	"time"
+	"wf-account-job/ent/predicate"
+	"wf-account-job/ent/relaychain"
+	"wf-account-job/ent/relaytoken"
+	"wf-account-job/ent/task"
+	"wf-account-job/ent/tasklog"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
 )
 
 const (
@@ -25,9 +27,3177 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeTask    = "Task"
-	TypeTaskLog = "TaskLog"
+	TypeRelayChain = "RelayChain"
+	TypeRelayToken = "RelayToken"
+	TypeTask       = "Task"
+	TypeTaskLog    = "TaskLog"
 )
+
+// RelayChainMutation represents an operation that mutates the RelayChain nodes in the graph.
+type RelayChainMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *int64
+	slug               *string
+	name               *string
+	logo_url           *string
+	_type              *string
+	vm_type            *string
+	protocol           *string
+	base_chain_id      *string
+	explorer_url       *string
+	explorer_name      *string
+	rpc_url            *string
+	ws_rpc_url         *string
+	native_symbol      *string
+	native_decimals    *int
+	addnative_decimals *int
+	deposit_enabled    *bool
+	token_support      *string
+	disabled           *bool
+	supported          *bool
+	enabled            *bool
+	raw_data           *string
+	created_at         *time.Time
+	updated_at         *time.Time
+	clearedFields      map[string]struct{}
+	tokens             map[int]struct{}
+	removedtokens      map[int]struct{}
+	clearedtokens      bool
+	done               bool
+	oldValue           func(context.Context) (*RelayChain, error)
+	predicates         []predicate.RelayChain
+}
+
+var _ ent.Mutation = (*RelayChainMutation)(nil)
+
+// relaychainOption allows management of the mutation configuration using functional options.
+type relaychainOption func(*RelayChainMutation)
+
+// newRelayChainMutation creates new mutation for the RelayChain entity.
+func newRelayChainMutation(c config, op Op, opts ...relaychainOption) *RelayChainMutation {
+	m := &RelayChainMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRelayChain,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRelayChainID sets the ID field of the mutation.
+func withRelayChainID(id int64) relaychainOption {
+	return func(m *RelayChainMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RelayChain
+		)
+		m.oldValue = func(ctx context.Context) (*RelayChain, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RelayChain.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRelayChain sets the old RelayChain of the mutation.
+func withRelayChain(node *RelayChain) relaychainOption {
+	return func(m *RelayChainMutation) {
+		m.oldValue = func(context.Context) (*RelayChain, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RelayChainMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RelayChainMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of RelayChain entities.
+func (m *RelayChainMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *RelayChainMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *RelayChainMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().RelayChain.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetSlug sets the "slug" field.
+func (m *RelayChainMutation) SetSlug(s string) {
+	m.slug = &s
+}
+
+// Slug returns the value of the "slug" field in the mutation.
+func (m *RelayChainMutation) Slug() (r string, exists bool) {
+	v := m.slug
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSlug returns the old "slug" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldSlug(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSlug is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSlug requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSlug: %w", err)
+	}
+	return oldValue.Slug, nil
+}
+
+// ClearSlug clears the value of the "slug" field.
+func (m *RelayChainMutation) ClearSlug() {
+	m.slug = nil
+	m.clearedFields[relaychain.FieldSlug] = struct{}{}
+}
+
+// SlugCleared returns if the "slug" field was cleared in this mutation.
+func (m *RelayChainMutation) SlugCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldSlug]
+	return ok
+}
+
+// ResetSlug resets all changes to the "slug" field.
+func (m *RelayChainMutation) ResetSlug() {
+	m.slug = nil
+	delete(m.clearedFields, relaychain.FieldSlug)
+}
+
+// SetName sets the "name" field.
+func (m *RelayChainMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *RelayChainMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *RelayChainMutation) ResetName() {
+	m.name = nil
+}
+
+// SetLogoURL sets the "logo_url" field.
+func (m *RelayChainMutation) SetLogoURL(s string) {
+	m.logo_url = &s
+}
+
+// LogoURL returns the value of the "logo_url" field in the mutation.
+func (m *RelayChainMutation) LogoURL() (r string, exists bool) {
+	v := m.logo_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLogoURL returns the old "logo_url" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldLogoURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLogoURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLogoURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLogoURL: %w", err)
+	}
+	return oldValue.LogoURL, nil
+}
+
+// ClearLogoURL clears the value of the "logo_url" field.
+func (m *RelayChainMutation) ClearLogoURL() {
+	m.logo_url = nil
+	m.clearedFields[relaychain.FieldLogoURL] = struct{}{}
+}
+
+// LogoURLCleared returns if the "logo_url" field was cleared in this mutation.
+func (m *RelayChainMutation) LogoURLCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldLogoURL]
+	return ok
+}
+
+// ResetLogoURL resets all changes to the "logo_url" field.
+func (m *RelayChainMutation) ResetLogoURL() {
+	m.logo_url = nil
+	delete(m.clearedFields, relaychain.FieldLogoURL)
+}
+
+// SetType sets the "type" field.
+func (m *RelayChainMutation) SetType(s string) {
+	m._type = &s
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *RelayChainMutation) GetType() (r string, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *RelayChainMutation) ResetType() {
+	m._type = nil
+}
+
+// SetVMType sets the "vm_type" field.
+func (m *RelayChainMutation) SetVMType(s string) {
+	m.vm_type = &s
+}
+
+// VMType returns the value of the "vm_type" field in the mutation.
+func (m *RelayChainMutation) VMType() (r string, exists bool) {
+	v := m.vm_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldVMType returns the old "vm_type" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldVMType(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldVMType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldVMType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldVMType: %w", err)
+	}
+	return oldValue.VMType, nil
+}
+
+// ClearVMType clears the value of the "vm_type" field.
+func (m *RelayChainMutation) ClearVMType() {
+	m.vm_type = nil
+	m.clearedFields[relaychain.FieldVMType] = struct{}{}
+}
+
+// VMTypeCleared returns if the "vm_type" field was cleared in this mutation.
+func (m *RelayChainMutation) VMTypeCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldVMType]
+	return ok
+}
+
+// ResetVMType resets all changes to the "vm_type" field.
+func (m *RelayChainMutation) ResetVMType() {
+	m.vm_type = nil
+	delete(m.clearedFields, relaychain.FieldVMType)
+}
+
+// SetProtocol sets the "protocol" field.
+func (m *RelayChainMutation) SetProtocol(s string) {
+	m.protocol = &s
+}
+
+// Protocol returns the value of the "protocol" field in the mutation.
+func (m *RelayChainMutation) Protocol() (r string, exists bool) {
+	v := m.protocol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProtocol returns the old "protocol" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldProtocol(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProtocol is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProtocol requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProtocol: %w", err)
+	}
+	return oldValue.Protocol, nil
+}
+
+// ClearProtocol clears the value of the "protocol" field.
+func (m *RelayChainMutation) ClearProtocol() {
+	m.protocol = nil
+	m.clearedFields[relaychain.FieldProtocol] = struct{}{}
+}
+
+// ProtocolCleared returns if the "protocol" field was cleared in this mutation.
+func (m *RelayChainMutation) ProtocolCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldProtocol]
+	return ok
+}
+
+// ResetProtocol resets all changes to the "protocol" field.
+func (m *RelayChainMutation) ResetProtocol() {
+	m.protocol = nil
+	delete(m.clearedFields, relaychain.FieldProtocol)
+}
+
+// SetBaseChainID sets the "base_chain_id" field.
+func (m *RelayChainMutation) SetBaseChainID(s string) {
+	m.base_chain_id = &s
+}
+
+// BaseChainID returns the value of the "base_chain_id" field in the mutation.
+func (m *RelayChainMutation) BaseChainID() (r string, exists bool) {
+	v := m.base_chain_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBaseChainID returns the old "base_chain_id" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldBaseChainID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBaseChainID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBaseChainID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBaseChainID: %w", err)
+	}
+	return oldValue.BaseChainID, nil
+}
+
+// ClearBaseChainID clears the value of the "base_chain_id" field.
+func (m *RelayChainMutation) ClearBaseChainID() {
+	m.base_chain_id = nil
+	m.clearedFields[relaychain.FieldBaseChainID] = struct{}{}
+}
+
+// BaseChainIDCleared returns if the "base_chain_id" field was cleared in this mutation.
+func (m *RelayChainMutation) BaseChainIDCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldBaseChainID]
+	return ok
+}
+
+// ResetBaseChainID resets all changes to the "base_chain_id" field.
+func (m *RelayChainMutation) ResetBaseChainID() {
+	m.base_chain_id = nil
+	delete(m.clearedFields, relaychain.FieldBaseChainID)
+}
+
+// SetExplorerURL sets the "explorer_url" field.
+func (m *RelayChainMutation) SetExplorerURL(s string) {
+	m.explorer_url = &s
+}
+
+// ExplorerURL returns the value of the "explorer_url" field in the mutation.
+func (m *RelayChainMutation) ExplorerURL() (r string, exists bool) {
+	v := m.explorer_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExplorerURL returns the old "explorer_url" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldExplorerURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExplorerURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExplorerURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExplorerURL: %w", err)
+	}
+	return oldValue.ExplorerURL, nil
+}
+
+// ClearExplorerURL clears the value of the "explorer_url" field.
+func (m *RelayChainMutation) ClearExplorerURL() {
+	m.explorer_url = nil
+	m.clearedFields[relaychain.FieldExplorerURL] = struct{}{}
+}
+
+// ExplorerURLCleared returns if the "explorer_url" field was cleared in this mutation.
+func (m *RelayChainMutation) ExplorerURLCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldExplorerURL]
+	return ok
+}
+
+// ResetExplorerURL resets all changes to the "explorer_url" field.
+func (m *RelayChainMutation) ResetExplorerURL() {
+	m.explorer_url = nil
+	delete(m.clearedFields, relaychain.FieldExplorerURL)
+}
+
+// SetExplorerName sets the "explorer_name" field.
+func (m *RelayChainMutation) SetExplorerName(s string) {
+	m.explorer_name = &s
+}
+
+// ExplorerName returns the value of the "explorer_name" field in the mutation.
+func (m *RelayChainMutation) ExplorerName() (r string, exists bool) {
+	v := m.explorer_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExplorerName returns the old "explorer_name" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldExplorerName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExplorerName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExplorerName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExplorerName: %w", err)
+	}
+	return oldValue.ExplorerName, nil
+}
+
+// ClearExplorerName clears the value of the "explorer_name" field.
+func (m *RelayChainMutation) ClearExplorerName() {
+	m.explorer_name = nil
+	m.clearedFields[relaychain.FieldExplorerName] = struct{}{}
+}
+
+// ExplorerNameCleared returns if the "explorer_name" field was cleared in this mutation.
+func (m *RelayChainMutation) ExplorerNameCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldExplorerName]
+	return ok
+}
+
+// ResetExplorerName resets all changes to the "explorer_name" field.
+func (m *RelayChainMutation) ResetExplorerName() {
+	m.explorer_name = nil
+	delete(m.clearedFields, relaychain.FieldExplorerName)
+}
+
+// SetRPCURL sets the "rpc_url" field.
+func (m *RelayChainMutation) SetRPCURL(s string) {
+	m.rpc_url = &s
+}
+
+// RPCURL returns the value of the "rpc_url" field in the mutation.
+func (m *RelayChainMutation) RPCURL() (r string, exists bool) {
+	v := m.rpc_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRPCURL returns the old "rpc_url" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldRPCURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRPCURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRPCURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRPCURL: %w", err)
+	}
+	return oldValue.RPCURL, nil
+}
+
+// ClearRPCURL clears the value of the "rpc_url" field.
+func (m *RelayChainMutation) ClearRPCURL() {
+	m.rpc_url = nil
+	m.clearedFields[relaychain.FieldRPCURL] = struct{}{}
+}
+
+// RPCURLCleared returns if the "rpc_url" field was cleared in this mutation.
+func (m *RelayChainMutation) RPCURLCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldRPCURL]
+	return ok
+}
+
+// ResetRPCURL resets all changes to the "rpc_url" field.
+func (m *RelayChainMutation) ResetRPCURL() {
+	m.rpc_url = nil
+	delete(m.clearedFields, relaychain.FieldRPCURL)
+}
+
+// SetWsRPCURL sets the "ws_rpc_url" field.
+func (m *RelayChainMutation) SetWsRPCURL(s string) {
+	m.ws_rpc_url = &s
+}
+
+// WsRPCURL returns the value of the "ws_rpc_url" field in the mutation.
+func (m *RelayChainMutation) WsRPCURL() (r string, exists bool) {
+	v := m.ws_rpc_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWsRPCURL returns the old "ws_rpc_url" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldWsRPCURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWsRPCURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWsRPCURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWsRPCURL: %w", err)
+	}
+	return oldValue.WsRPCURL, nil
+}
+
+// ClearWsRPCURL clears the value of the "ws_rpc_url" field.
+func (m *RelayChainMutation) ClearWsRPCURL() {
+	m.ws_rpc_url = nil
+	m.clearedFields[relaychain.FieldWsRPCURL] = struct{}{}
+}
+
+// WsRPCURLCleared returns if the "ws_rpc_url" field was cleared in this mutation.
+func (m *RelayChainMutation) WsRPCURLCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldWsRPCURL]
+	return ok
+}
+
+// ResetWsRPCURL resets all changes to the "ws_rpc_url" field.
+func (m *RelayChainMutation) ResetWsRPCURL() {
+	m.ws_rpc_url = nil
+	delete(m.clearedFields, relaychain.FieldWsRPCURL)
+}
+
+// SetNativeSymbol sets the "native_symbol" field.
+func (m *RelayChainMutation) SetNativeSymbol(s string) {
+	m.native_symbol = &s
+}
+
+// NativeSymbol returns the value of the "native_symbol" field in the mutation.
+func (m *RelayChainMutation) NativeSymbol() (r string, exists bool) {
+	v := m.native_symbol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNativeSymbol returns the old "native_symbol" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldNativeSymbol(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNativeSymbol is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNativeSymbol requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNativeSymbol: %w", err)
+	}
+	return oldValue.NativeSymbol, nil
+}
+
+// ClearNativeSymbol clears the value of the "native_symbol" field.
+func (m *RelayChainMutation) ClearNativeSymbol() {
+	m.native_symbol = nil
+	m.clearedFields[relaychain.FieldNativeSymbol] = struct{}{}
+}
+
+// NativeSymbolCleared returns if the "native_symbol" field was cleared in this mutation.
+func (m *RelayChainMutation) NativeSymbolCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldNativeSymbol]
+	return ok
+}
+
+// ResetNativeSymbol resets all changes to the "native_symbol" field.
+func (m *RelayChainMutation) ResetNativeSymbol() {
+	m.native_symbol = nil
+	delete(m.clearedFields, relaychain.FieldNativeSymbol)
+}
+
+// SetNativeDecimals sets the "native_decimals" field.
+func (m *RelayChainMutation) SetNativeDecimals(i int) {
+	m.native_decimals = &i
+	m.addnative_decimals = nil
+}
+
+// NativeDecimals returns the value of the "native_decimals" field in the mutation.
+func (m *RelayChainMutation) NativeDecimals() (r int, exists bool) {
+	v := m.native_decimals
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNativeDecimals returns the old "native_decimals" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldNativeDecimals(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNativeDecimals is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNativeDecimals requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNativeDecimals: %w", err)
+	}
+	return oldValue.NativeDecimals, nil
+}
+
+// AddNativeDecimals adds i to the "native_decimals" field.
+func (m *RelayChainMutation) AddNativeDecimals(i int) {
+	if m.addnative_decimals != nil {
+		*m.addnative_decimals += i
+	} else {
+		m.addnative_decimals = &i
+	}
+}
+
+// AddedNativeDecimals returns the value that was added to the "native_decimals" field in this mutation.
+func (m *RelayChainMutation) AddedNativeDecimals() (r int, exists bool) {
+	v := m.addnative_decimals
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetNativeDecimals resets all changes to the "native_decimals" field.
+func (m *RelayChainMutation) ResetNativeDecimals() {
+	m.native_decimals = nil
+	m.addnative_decimals = nil
+}
+
+// SetDepositEnabled sets the "deposit_enabled" field.
+func (m *RelayChainMutation) SetDepositEnabled(b bool) {
+	m.deposit_enabled = &b
+}
+
+// DepositEnabled returns the value of the "deposit_enabled" field in the mutation.
+func (m *RelayChainMutation) DepositEnabled() (r bool, exists bool) {
+	v := m.deposit_enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDepositEnabled returns the old "deposit_enabled" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldDepositEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDepositEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDepositEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDepositEnabled: %w", err)
+	}
+	return oldValue.DepositEnabled, nil
+}
+
+// ResetDepositEnabled resets all changes to the "deposit_enabled" field.
+func (m *RelayChainMutation) ResetDepositEnabled() {
+	m.deposit_enabled = nil
+}
+
+// SetTokenSupport sets the "token_support" field.
+func (m *RelayChainMutation) SetTokenSupport(s string) {
+	m.token_support = &s
+}
+
+// TokenSupport returns the value of the "token_support" field in the mutation.
+func (m *RelayChainMutation) TokenSupport() (r string, exists bool) {
+	v := m.token_support
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenSupport returns the old "token_support" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldTokenSupport(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTokenSupport is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTokenSupport requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenSupport: %w", err)
+	}
+	return oldValue.TokenSupport, nil
+}
+
+// ClearTokenSupport clears the value of the "token_support" field.
+func (m *RelayChainMutation) ClearTokenSupport() {
+	m.token_support = nil
+	m.clearedFields[relaychain.FieldTokenSupport] = struct{}{}
+}
+
+// TokenSupportCleared returns if the "token_support" field was cleared in this mutation.
+func (m *RelayChainMutation) TokenSupportCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldTokenSupport]
+	return ok
+}
+
+// ResetTokenSupport resets all changes to the "token_support" field.
+func (m *RelayChainMutation) ResetTokenSupport() {
+	m.token_support = nil
+	delete(m.clearedFields, relaychain.FieldTokenSupport)
+}
+
+// SetDisabled sets the "disabled" field.
+func (m *RelayChainMutation) SetDisabled(b bool) {
+	m.disabled = &b
+}
+
+// Disabled returns the value of the "disabled" field in the mutation.
+func (m *RelayChainMutation) Disabled() (r bool, exists bool) {
+	v := m.disabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDisabled returns the old "disabled" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldDisabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDisabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDisabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDisabled: %w", err)
+	}
+	return oldValue.Disabled, nil
+}
+
+// ResetDisabled resets all changes to the "disabled" field.
+func (m *RelayChainMutation) ResetDisabled() {
+	m.disabled = nil
+}
+
+// SetSupported sets the "supported" field.
+func (m *RelayChainMutation) SetSupported(b bool) {
+	m.supported = &b
+}
+
+// Supported returns the value of the "supported" field in the mutation.
+func (m *RelayChainMutation) Supported() (r bool, exists bool) {
+	v := m.supported
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupported returns the old "supported" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldSupported(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupported is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupported requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupported: %w", err)
+	}
+	return oldValue.Supported, nil
+}
+
+// ResetSupported resets all changes to the "supported" field.
+func (m *RelayChainMutation) ResetSupported() {
+	m.supported = nil
+}
+
+// SetEnabled sets the "enabled" field.
+func (m *RelayChainMutation) SetEnabled(b bool) {
+	m.enabled = &b
+}
+
+// Enabled returns the value of the "enabled" field in the mutation.
+func (m *RelayChainMutation) Enabled() (r bool, exists bool) {
+	v := m.enabled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEnabled returns the old "enabled" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldEnabled(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEnabled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEnabled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEnabled: %w", err)
+	}
+	return oldValue.Enabled, nil
+}
+
+// ResetEnabled resets all changes to the "enabled" field.
+func (m *RelayChainMutation) ResetEnabled() {
+	m.enabled = nil
+}
+
+// SetRawData sets the "raw_data" field.
+func (m *RelayChainMutation) SetRawData(s string) {
+	m.raw_data = &s
+}
+
+// RawData returns the value of the "raw_data" field in the mutation.
+func (m *RelayChainMutation) RawData() (r string, exists bool) {
+	v := m.raw_data
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRawData returns the old "raw_data" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldRawData(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRawData is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRawData requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRawData: %w", err)
+	}
+	return oldValue.RawData, nil
+}
+
+// ClearRawData clears the value of the "raw_data" field.
+func (m *RelayChainMutation) ClearRawData() {
+	m.raw_data = nil
+	m.clearedFields[relaychain.FieldRawData] = struct{}{}
+}
+
+// RawDataCleared returns if the "raw_data" field was cleared in this mutation.
+func (m *RelayChainMutation) RawDataCleared() bool {
+	_, ok := m.clearedFields[relaychain.FieldRawData]
+	return ok
+}
+
+// ResetRawData resets all changes to the "raw_data" field.
+func (m *RelayChainMutation) ResetRawData() {
+	m.raw_data = nil
+	delete(m.clearedFields, relaychain.FieldRawData)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *RelayChainMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *RelayChainMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *RelayChainMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *RelayChainMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *RelayChainMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the RelayChain entity.
+// If the RelayChain object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayChainMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *RelayChainMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// AddTokenIDs adds the "tokens" edge to the RelayToken entity by ids.
+func (m *RelayChainMutation) AddTokenIDs(ids ...int) {
+	if m.tokens == nil {
+		m.tokens = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.tokens[ids[i]] = struct{}{}
+	}
+}
+
+// ClearTokens clears the "tokens" edge to the RelayToken entity.
+func (m *RelayChainMutation) ClearTokens() {
+	m.clearedtokens = true
+}
+
+// TokensCleared reports if the "tokens" edge to the RelayToken entity was cleared.
+func (m *RelayChainMutation) TokensCleared() bool {
+	return m.clearedtokens
+}
+
+// RemoveTokenIDs removes the "tokens" edge to the RelayToken entity by IDs.
+func (m *RelayChainMutation) RemoveTokenIDs(ids ...int) {
+	if m.removedtokens == nil {
+		m.removedtokens = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.tokens, ids[i])
+		m.removedtokens[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedTokens returns the removed IDs of the "tokens" edge to the RelayToken entity.
+func (m *RelayChainMutation) RemovedTokensIDs() (ids []int) {
+	for id := range m.removedtokens {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// TokensIDs returns the "tokens" edge IDs in the mutation.
+func (m *RelayChainMutation) TokensIDs() (ids []int) {
+	for id := range m.tokens {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetTokens resets all changes to the "tokens" edge.
+func (m *RelayChainMutation) ResetTokens() {
+	m.tokens = nil
+	m.clearedtokens = false
+	m.removedtokens = nil
+}
+
+// Where appends a list predicates to the RelayChainMutation builder.
+func (m *RelayChainMutation) Where(ps ...predicate.RelayChain) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the RelayChainMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RelayChainMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.RelayChain, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *RelayChainMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RelayChainMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (RelayChain).
+func (m *RelayChainMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *RelayChainMutation) Fields() []string {
+	fields := make([]string, 0, 21)
+	if m.slug != nil {
+		fields = append(fields, relaychain.FieldSlug)
+	}
+	if m.name != nil {
+		fields = append(fields, relaychain.FieldName)
+	}
+	if m.logo_url != nil {
+		fields = append(fields, relaychain.FieldLogoURL)
+	}
+	if m._type != nil {
+		fields = append(fields, relaychain.FieldType)
+	}
+	if m.vm_type != nil {
+		fields = append(fields, relaychain.FieldVMType)
+	}
+	if m.protocol != nil {
+		fields = append(fields, relaychain.FieldProtocol)
+	}
+	if m.base_chain_id != nil {
+		fields = append(fields, relaychain.FieldBaseChainID)
+	}
+	if m.explorer_url != nil {
+		fields = append(fields, relaychain.FieldExplorerURL)
+	}
+	if m.explorer_name != nil {
+		fields = append(fields, relaychain.FieldExplorerName)
+	}
+	if m.rpc_url != nil {
+		fields = append(fields, relaychain.FieldRPCURL)
+	}
+	if m.ws_rpc_url != nil {
+		fields = append(fields, relaychain.FieldWsRPCURL)
+	}
+	if m.native_symbol != nil {
+		fields = append(fields, relaychain.FieldNativeSymbol)
+	}
+	if m.native_decimals != nil {
+		fields = append(fields, relaychain.FieldNativeDecimals)
+	}
+	if m.deposit_enabled != nil {
+		fields = append(fields, relaychain.FieldDepositEnabled)
+	}
+	if m.token_support != nil {
+		fields = append(fields, relaychain.FieldTokenSupport)
+	}
+	if m.disabled != nil {
+		fields = append(fields, relaychain.FieldDisabled)
+	}
+	if m.supported != nil {
+		fields = append(fields, relaychain.FieldSupported)
+	}
+	if m.enabled != nil {
+		fields = append(fields, relaychain.FieldEnabled)
+	}
+	if m.raw_data != nil {
+		fields = append(fields, relaychain.FieldRawData)
+	}
+	if m.created_at != nil {
+		fields = append(fields, relaychain.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, relaychain.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *RelayChainMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case relaychain.FieldSlug:
+		return m.Slug()
+	case relaychain.FieldName:
+		return m.Name()
+	case relaychain.FieldLogoURL:
+		return m.LogoURL()
+	case relaychain.FieldType:
+		return m.GetType()
+	case relaychain.FieldVMType:
+		return m.VMType()
+	case relaychain.FieldProtocol:
+		return m.Protocol()
+	case relaychain.FieldBaseChainID:
+		return m.BaseChainID()
+	case relaychain.FieldExplorerURL:
+		return m.ExplorerURL()
+	case relaychain.FieldExplorerName:
+		return m.ExplorerName()
+	case relaychain.FieldRPCURL:
+		return m.RPCURL()
+	case relaychain.FieldWsRPCURL:
+		return m.WsRPCURL()
+	case relaychain.FieldNativeSymbol:
+		return m.NativeSymbol()
+	case relaychain.FieldNativeDecimals:
+		return m.NativeDecimals()
+	case relaychain.FieldDepositEnabled:
+		return m.DepositEnabled()
+	case relaychain.FieldTokenSupport:
+		return m.TokenSupport()
+	case relaychain.FieldDisabled:
+		return m.Disabled()
+	case relaychain.FieldSupported:
+		return m.Supported()
+	case relaychain.FieldEnabled:
+		return m.Enabled()
+	case relaychain.FieldRawData:
+		return m.RawData()
+	case relaychain.FieldCreatedAt:
+		return m.CreatedAt()
+	case relaychain.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *RelayChainMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case relaychain.FieldSlug:
+		return m.OldSlug(ctx)
+	case relaychain.FieldName:
+		return m.OldName(ctx)
+	case relaychain.FieldLogoURL:
+		return m.OldLogoURL(ctx)
+	case relaychain.FieldType:
+		return m.OldType(ctx)
+	case relaychain.FieldVMType:
+		return m.OldVMType(ctx)
+	case relaychain.FieldProtocol:
+		return m.OldProtocol(ctx)
+	case relaychain.FieldBaseChainID:
+		return m.OldBaseChainID(ctx)
+	case relaychain.FieldExplorerURL:
+		return m.OldExplorerURL(ctx)
+	case relaychain.FieldExplorerName:
+		return m.OldExplorerName(ctx)
+	case relaychain.FieldRPCURL:
+		return m.OldRPCURL(ctx)
+	case relaychain.FieldWsRPCURL:
+		return m.OldWsRPCURL(ctx)
+	case relaychain.FieldNativeSymbol:
+		return m.OldNativeSymbol(ctx)
+	case relaychain.FieldNativeDecimals:
+		return m.OldNativeDecimals(ctx)
+	case relaychain.FieldDepositEnabled:
+		return m.OldDepositEnabled(ctx)
+	case relaychain.FieldTokenSupport:
+		return m.OldTokenSupport(ctx)
+	case relaychain.FieldDisabled:
+		return m.OldDisabled(ctx)
+	case relaychain.FieldSupported:
+		return m.OldSupported(ctx)
+	case relaychain.FieldEnabled:
+		return m.OldEnabled(ctx)
+	case relaychain.FieldRawData:
+		return m.OldRawData(ctx)
+	case relaychain.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case relaychain.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown RelayChain field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RelayChainMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case relaychain.FieldSlug:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSlug(v)
+		return nil
+	case relaychain.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case relaychain.FieldLogoURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLogoURL(v)
+		return nil
+	case relaychain.FieldType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case relaychain.FieldVMType:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetVMType(v)
+		return nil
+	case relaychain.FieldProtocol:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProtocol(v)
+		return nil
+	case relaychain.FieldBaseChainID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBaseChainID(v)
+		return nil
+	case relaychain.FieldExplorerURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExplorerURL(v)
+		return nil
+	case relaychain.FieldExplorerName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExplorerName(v)
+		return nil
+	case relaychain.FieldRPCURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRPCURL(v)
+		return nil
+	case relaychain.FieldWsRPCURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWsRPCURL(v)
+		return nil
+	case relaychain.FieldNativeSymbol:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNativeSymbol(v)
+		return nil
+	case relaychain.FieldNativeDecimals:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNativeDecimals(v)
+		return nil
+	case relaychain.FieldDepositEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDepositEnabled(v)
+		return nil
+	case relaychain.FieldTokenSupport:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenSupport(v)
+		return nil
+	case relaychain.FieldDisabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDisabled(v)
+		return nil
+	case relaychain.FieldSupported:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupported(v)
+		return nil
+	case relaychain.FieldEnabled:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEnabled(v)
+		return nil
+	case relaychain.FieldRawData:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRawData(v)
+		return nil
+	case relaychain.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case relaychain.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RelayChain field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *RelayChainMutation) AddedFields() []string {
+	var fields []string
+	if m.addnative_decimals != nil {
+		fields = append(fields, relaychain.FieldNativeDecimals)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *RelayChainMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case relaychain.FieldNativeDecimals:
+		return m.AddedNativeDecimals()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RelayChainMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case relaychain.FieldNativeDecimals:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddNativeDecimals(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RelayChain numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *RelayChainMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(relaychain.FieldSlug) {
+		fields = append(fields, relaychain.FieldSlug)
+	}
+	if m.FieldCleared(relaychain.FieldLogoURL) {
+		fields = append(fields, relaychain.FieldLogoURL)
+	}
+	if m.FieldCleared(relaychain.FieldVMType) {
+		fields = append(fields, relaychain.FieldVMType)
+	}
+	if m.FieldCleared(relaychain.FieldProtocol) {
+		fields = append(fields, relaychain.FieldProtocol)
+	}
+	if m.FieldCleared(relaychain.FieldBaseChainID) {
+		fields = append(fields, relaychain.FieldBaseChainID)
+	}
+	if m.FieldCleared(relaychain.FieldExplorerURL) {
+		fields = append(fields, relaychain.FieldExplorerURL)
+	}
+	if m.FieldCleared(relaychain.FieldExplorerName) {
+		fields = append(fields, relaychain.FieldExplorerName)
+	}
+	if m.FieldCleared(relaychain.FieldRPCURL) {
+		fields = append(fields, relaychain.FieldRPCURL)
+	}
+	if m.FieldCleared(relaychain.FieldWsRPCURL) {
+		fields = append(fields, relaychain.FieldWsRPCURL)
+	}
+	if m.FieldCleared(relaychain.FieldNativeSymbol) {
+		fields = append(fields, relaychain.FieldNativeSymbol)
+	}
+	if m.FieldCleared(relaychain.FieldTokenSupport) {
+		fields = append(fields, relaychain.FieldTokenSupport)
+	}
+	if m.FieldCleared(relaychain.FieldRawData) {
+		fields = append(fields, relaychain.FieldRawData)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *RelayChainMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RelayChainMutation) ClearField(name string) error {
+	switch name {
+	case relaychain.FieldSlug:
+		m.ClearSlug()
+		return nil
+	case relaychain.FieldLogoURL:
+		m.ClearLogoURL()
+		return nil
+	case relaychain.FieldVMType:
+		m.ClearVMType()
+		return nil
+	case relaychain.FieldProtocol:
+		m.ClearProtocol()
+		return nil
+	case relaychain.FieldBaseChainID:
+		m.ClearBaseChainID()
+		return nil
+	case relaychain.FieldExplorerURL:
+		m.ClearExplorerURL()
+		return nil
+	case relaychain.FieldExplorerName:
+		m.ClearExplorerName()
+		return nil
+	case relaychain.FieldRPCURL:
+		m.ClearRPCURL()
+		return nil
+	case relaychain.FieldWsRPCURL:
+		m.ClearWsRPCURL()
+		return nil
+	case relaychain.FieldNativeSymbol:
+		m.ClearNativeSymbol()
+		return nil
+	case relaychain.FieldTokenSupport:
+		m.ClearTokenSupport()
+		return nil
+	case relaychain.FieldRawData:
+		m.ClearRawData()
+		return nil
+	}
+	return fmt.Errorf("unknown RelayChain nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *RelayChainMutation) ResetField(name string) error {
+	switch name {
+	case relaychain.FieldSlug:
+		m.ResetSlug()
+		return nil
+	case relaychain.FieldName:
+		m.ResetName()
+		return nil
+	case relaychain.FieldLogoURL:
+		m.ResetLogoURL()
+		return nil
+	case relaychain.FieldType:
+		m.ResetType()
+		return nil
+	case relaychain.FieldVMType:
+		m.ResetVMType()
+		return nil
+	case relaychain.FieldProtocol:
+		m.ResetProtocol()
+		return nil
+	case relaychain.FieldBaseChainID:
+		m.ResetBaseChainID()
+		return nil
+	case relaychain.FieldExplorerURL:
+		m.ResetExplorerURL()
+		return nil
+	case relaychain.FieldExplorerName:
+		m.ResetExplorerName()
+		return nil
+	case relaychain.FieldRPCURL:
+		m.ResetRPCURL()
+		return nil
+	case relaychain.FieldWsRPCURL:
+		m.ResetWsRPCURL()
+		return nil
+	case relaychain.FieldNativeSymbol:
+		m.ResetNativeSymbol()
+		return nil
+	case relaychain.FieldNativeDecimals:
+		m.ResetNativeDecimals()
+		return nil
+	case relaychain.FieldDepositEnabled:
+		m.ResetDepositEnabled()
+		return nil
+	case relaychain.FieldTokenSupport:
+		m.ResetTokenSupport()
+		return nil
+	case relaychain.FieldDisabled:
+		m.ResetDisabled()
+		return nil
+	case relaychain.FieldSupported:
+		m.ResetSupported()
+		return nil
+	case relaychain.FieldEnabled:
+		m.ResetEnabled()
+		return nil
+	case relaychain.FieldRawData:
+		m.ResetRawData()
+		return nil
+	case relaychain.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case relaychain.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown RelayChain field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *RelayChainMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.tokens != nil {
+		edges = append(edges, relaychain.EdgeTokens)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *RelayChainMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case relaychain.EdgeTokens:
+		ids := make([]ent.Value, 0, len(m.tokens))
+		for id := range m.tokens {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *RelayChainMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.removedtokens != nil {
+		edges = append(edges, relaychain.EdgeTokens)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *RelayChainMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case relaychain.EdgeTokens:
+		ids := make([]ent.Value, 0, len(m.removedtokens))
+		for id := range m.removedtokens {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *RelayChainMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedtokens {
+		edges = append(edges, relaychain.EdgeTokens)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *RelayChainMutation) EdgeCleared(name string) bool {
+	switch name {
+	case relaychain.EdgeTokens:
+		return m.clearedtokens
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *RelayChainMutation) ClearEdge(name string) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown RelayChain unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *RelayChainMutation) ResetEdge(name string) error {
+	switch name {
+	case relaychain.EdgeTokens:
+		m.ResetTokens()
+		return nil
+	}
+	return fmt.Errorf("unknown RelayChain edge %s", name)
+}
+
+// RelayTokenMutation represents an operation that mutates the RelayToken nodes in the graph.
+type RelayTokenMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int
+	token_id          *string
+	address           *string
+	name              *string
+	symbol            *string
+	logo_url          *string
+	decimals          *int
+	adddecimals       *int
+	native            *bool
+	stablecoin        *bool
+	supports_bridging *bool
+	supports_permit   *bool
+	is_featured       *bool
+	is_solver         *bool
+	is_erc20          *bool
+	supported         *bool
+	raw_data          *string
+	created_at        *time.Time
+	updated_at        *time.Time
+	clearedFields     map[string]struct{}
+	chain             *int64
+	clearedchain      bool
+	done              bool
+	oldValue          func(context.Context) (*RelayToken, error)
+	predicates        []predicate.RelayToken
+}
+
+var _ ent.Mutation = (*RelayTokenMutation)(nil)
+
+// relaytokenOption allows management of the mutation configuration using functional options.
+type relaytokenOption func(*RelayTokenMutation)
+
+// newRelayTokenMutation creates new mutation for the RelayToken entity.
+func newRelayTokenMutation(c config, op Op, opts ...relaytokenOption) *RelayTokenMutation {
+	m := &RelayTokenMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeRelayToken,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withRelayTokenID sets the ID field of the mutation.
+func withRelayTokenID(id int) relaytokenOption {
+	return func(m *RelayTokenMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *RelayToken
+		)
+		m.oldValue = func(ctx context.Context) (*RelayToken, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().RelayToken.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withRelayToken sets the old RelayToken of the mutation.
+func withRelayToken(node *RelayToken) relaytokenOption {
+	return func(m *RelayTokenMutation) {
+		m.oldValue = func(context.Context) (*RelayToken, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m RelayTokenMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m RelayTokenMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *RelayTokenMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *RelayTokenMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().RelayToken.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetTokenID sets the "token_id" field.
+func (m *RelayTokenMutation) SetTokenID(s string) {
+	m.token_id = &s
+}
+
+// TokenID returns the value of the "token_id" field in the mutation.
+func (m *RelayTokenMutation) TokenID() (r string, exists bool) {
+	v := m.token_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTokenID returns the old "token_id" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldTokenID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTokenID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTokenID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTokenID: %w", err)
+	}
+	return oldValue.TokenID, nil
+}
+
+// ResetTokenID resets all changes to the "token_id" field.
+func (m *RelayTokenMutation) ResetTokenID() {
+	m.token_id = nil
+}
+
+// SetChainID sets the "chain_id" field.
+func (m *RelayTokenMutation) SetChainID(i int64) {
+	m.chain = &i
+}
+
+// ChainID returns the value of the "chain_id" field in the mutation.
+func (m *RelayTokenMutation) ChainID() (r int64, exists bool) {
+	v := m.chain
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldChainID returns the old "chain_id" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldChainID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldChainID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldChainID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldChainID: %w", err)
+	}
+	return oldValue.ChainID, nil
+}
+
+// ResetChainID resets all changes to the "chain_id" field.
+func (m *RelayTokenMutation) ResetChainID() {
+	m.chain = nil
+}
+
+// SetAddress sets the "address" field.
+func (m *RelayTokenMutation) SetAddress(s string) {
+	m.address = &s
+}
+
+// Address returns the value of the "address" field in the mutation.
+func (m *RelayTokenMutation) Address() (r string, exists bool) {
+	v := m.address
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAddress returns the old "address" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldAddress(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAddress is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAddress requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAddress: %w", err)
+	}
+	return oldValue.Address, nil
+}
+
+// ResetAddress resets all changes to the "address" field.
+func (m *RelayTokenMutation) ResetAddress() {
+	m.address = nil
+}
+
+// SetName sets the "name" field.
+func (m *RelayTokenMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *RelayTokenMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *RelayTokenMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[relaytoken.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *RelayTokenMutation) NameCleared() bool {
+	_, ok := m.clearedFields[relaytoken.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *RelayTokenMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, relaytoken.FieldName)
+}
+
+// SetSymbol sets the "symbol" field.
+func (m *RelayTokenMutation) SetSymbol(s string) {
+	m.symbol = &s
+}
+
+// Symbol returns the value of the "symbol" field in the mutation.
+func (m *RelayTokenMutation) Symbol() (r string, exists bool) {
+	v := m.symbol
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSymbol returns the old "symbol" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldSymbol(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSymbol is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSymbol requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSymbol: %w", err)
+	}
+	return oldValue.Symbol, nil
+}
+
+// ResetSymbol resets all changes to the "symbol" field.
+func (m *RelayTokenMutation) ResetSymbol() {
+	m.symbol = nil
+}
+
+// SetLogoURL sets the "logo_url" field.
+func (m *RelayTokenMutation) SetLogoURL(s string) {
+	m.logo_url = &s
+}
+
+// LogoURL returns the value of the "logo_url" field in the mutation.
+func (m *RelayTokenMutation) LogoURL() (r string, exists bool) {
+	v := m.logo_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLogoURL returns the old "logo_url" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldLogoURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLogoURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLogoURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLogoURL: %w", err)
+	}
+	return oldValue.LogoURL, nil
+}
+
+// ClearLogoURL clears the value of the "logo_url" field.
+func (m *RelayTokenMutation) ClearLogoURL() {
+	m.logo_url = nil
+	m.clearedFields[relaytoken.FieldLogoURL] = struct{}{}
+}
+
+// LogoURLCleared returns if the "logo_url" field was cleared in this mutation.
+func (m *RelayTokenMutation) LogoURLCleared() bool {
+	_, ok := m.clearedFields[relaytoken.FieldLogoURL]
+	return ok
+}
+
+// ResetLogoURL resets all changes to the "logo_url" field.
+func (m *RelayTokenMutation) ResetLogoURL() {
+	m.logo_url = nil
+	delete(m.clearedFields, relaytoken.FieldLogoURL)
+}
+
+// SetDecimals sets the "decimals" field.
+func (m *RelayTokenMutation) SetDecimals(i int) {
+	m.decimals = &i
+	m.adddecimals = nil
+}
+
+// Decimals returns the value of the "decimals" field in the mutation.
+func (m *RelayTokenMutation) Decimals() (r int, exists bool) {
+	v := m.decimals
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDecimals returns the old "decimals" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldDecimals(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDecimals is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDecimals requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDecimals: %w", err)
+	}
+	return oldValue.Decimals, nil
+}
+
+// AddDecimals adds i to the "decimals" field.
+func (m *RelayTokenMutation) AddDecimals(i int) {
+	if m.adddecimals != nil {
+		*m.adddecimals += i
+	} else {
+		m.adddecimals = &i
+	}
+}
+
+// AddedDecimals returns the value that was added to the "decimals" field in this mutation.
+func (m *RelayTokenMutation) AddedDecimals() (r int, exists bool) {
+	v := m.adddecimals
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDecimals resets all changes to the "decimals" field.
+func (m *RelayTokenMutation) ResetDecimals() {
+	m.decimals = nil
+	m.adddecimals = nil
+}
+
+// SetNative sets the "native" field.
+func (m *RelayTokenMutation) SetNative(b bool) {
+	m.native = &b
+}
+
+// Native returns the value of the "native" field in the mutation.
+func (m *RelayTokenMutation) Native() (r bool, exists bool) {
+	v := m.native
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldNative returns the old "native" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldNative(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldNative is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldNative requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldNative: %w", err)
+	}
+	return oldValue.Native, nil
+}
+
+// ResetNative resets all changes to the "native" field.
+func (m *RelayTokenMutation) ResetNative() {
+	m.native = nil
+}
+
+// SetStablecoin sets the "stablecoin" field.
+func (m *RelayTokenMutation) SetStablecoin(b bool) {
+	m.stablecoin = &b
+}
+
+// Stablecoin returns the value of the "stablecoin" field in the mutation.
+func (m *RelayTokenMutation) Stablecoin() (r bool, exists bool) {
+	v := m.stablecoin
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStablecoin returns the old "stablecoin" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldStablecoin(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStablecoin is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStablecoin requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStablecoin: %w", err)
+	}
+	return oldValue.Stablecoin, nil
+}
+
+// ResetStablecoin resets all changes to the "stablecoin" field.
+func (m *RelayTokenMutation) ResetStablecoin() {
+	m.stablecoin = nil
+}
+
+// SetSupportsBridging sets the "supports_bridging" field.
+func (m *RelayTokenMutation) SetSupportsBridging(b bool) {
+	m.supports_bridging = &b
+}
+
+// SupportsBridging returns the value of the "supports_bridging" field in the mutation.
+func (m *RelayTokenMutation) SupportsBridging() (r bool, exists bool) {
+	v := m.supports_bridging
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupportsBridging returns the old "supports_bridging" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldSupportsBridging(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupportsBridging is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupportsBridging requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupportsBridging: %w", err)
+	}
+	return oldValue.SupportsBridging, nil
+}
+
+// ResetSupportsBridging resets all changes to the "supports_bridging" field.
+func (m *RelayTokenMutation) ResetSupportsBridging() {
+	m.supports_bridging = nil
+}
+
+// SetSupportsPermit sets the "supports_permit" field.
+func (m *RelayTokenMutation) SetSupportsPermit(b bool) {
+	m.supports_permit = &b
+}
+
+// SupportsPermit returns the value of the "supports_permit" field in the mutation.
+func (m *RelayTokenMutation) SupportsPermit() (r bool, exists bool) {
+	v := m.supports_permit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupportsPermit returns the old "supports_permit" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldSupportsPermit(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupportsPermit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupportsPermit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupportsPermit: %w", err)
+	}
+	return oldValue.SupportsPermit, nil
+}
+
+// ResetSupportsPermit resets all changes to the "supports_permit" field.
+func (m *RelayTokenMutation) ResetSupportsPermit() {
+	m.supports_permit = nil
+}
+
+// SetIsFeatured sets the "is_featured" field.
+func (m *RelayTokenMutation) SetIsFeatured(b bool) {
+	m.is_featured = &b
+}
+
+// IsFeatured returns the value of the "is_featured" field in the mutation.
+func (m *RelayTokenMutation) IsFeatured() (r bool, exists bool) {
+	v := m.is_featured
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsFeatured returns the old "is_featured" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldIsFeatured(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsFeatured is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsFeatured requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsFeatured: %w", err)
+	}
+	return oldValue.IsFeatured, nil
+}
+
+// ResetIsFeatured resets all changes to the "is_featured" field.
+func (m *RelayTokenMutation) ResetIsFeatured() {
+	m.is_featured = nil
+}
+
+// SetIsSolver sets the "is_solver" field.
+func (m *RelayTokenMutation) SetIsSolver(b bool) {
+	m.is_solver = &b
+}
+
+// IsSolver returns the value of the "is_solver" field in the mutation.
+func (m *RelayTokenMutation) IsSolver() (r bool, exists bool) {
+	v := m.is_solver
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsSolver returns the old "is_solver" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldIsSolver(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsSolver is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsSolver requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsSolver: %w", err)
+	}
+	return oldValue.IsSolver, nil
+}
+
+// ResetIsSolver resets all changes to the "is_solver" field.
+func (m *RelayTokenMutation) ResetIsSolver() {
+	m.is_solver = nil
+}
+
+// SetIsErc20 sets the "is_erc20" field.
+func (m *RelayTokenMutation) SetIsErc20(b bool) {
+	m.is_erc20 = &b
+}
+
+// IsErc20 returns the value of the "is_erc20" field in the mutation.
+func (m *RelayTokenMutation) IsErc20() (r bool, exists bool) {
+	v := m.is_erc20
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsErc20 returns the old "is_erc20" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldIsErc20(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsErc20 is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsErc20 requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsErc20: %w", err)
+	}
+	return oldValue.IsErc20, nil
+}
+
+// ResetIsErc20 resets all changes to the "is_erc20" field.
+func (m *RelayTokenMutation) ResetIsErc20() {
+	m.is_erc20 = nil
+}
+
+// SetSupported sets the "supported" field.
+func (m *RelayTokenMutation) SetSupported(b bool) {
+	m.supported = &b
+}
+
+// Supported returns the value of the "supported" field in the mutation.
+func (m *RelayTokenMutation) Supported() (r bool, exists bool) {
+	v := m.supported
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSupported returns the old "supported" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldSupported(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSupported is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSupported requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSupported: %w", err)
+	}
+	return oldValue.Supported, nil
+}
+
+// ResetSupported resets all changes to the "supported" field.
+func (m *RelayTokenMutation) ResetSupported() {
+	m.supported = nil
+}
+
+// SetRawData sets the "raw_data" field.
+func (m *RelayTokenMutation) SetRawData(s string) {
+	m.raw_data = &s
+}
+
+// RawData returns the value of the "raw_data" field in the mutation.
+func (m *RelayTokenMutation) RawData() (r string, exists bool) {
+	v := m.raw_data
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRawData returns the old "raw_data" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldRawData(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRawData is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRawData requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRawData: %w", err)
+	}
+	return oldValue.RawData, nil
+}
+
+// ClearRawData clears the value of the "raw_data" field.
+func (m *RelayTokenMutation) ClearRawData() {
+	m.raw_data = nil
+	m.clearedFields[relaytoken.FieldRawData] = struct{}{}
+}
+
+// RawDataCleared returns if the "raw_data" field was cleared in this mutation.
+func (m *RelayTokenMutation) RawDataCleared() bool {
+	_, ok := m.clearedFields[relaytoken.FieldRawData]
+	return ok
+}
+
+// ResetRawData resets all changes to the "raw_data" field.
+func (m *RelayTokenMutation) ResetRawData() {
+	m.raw_data = nil
+	delete(m.clearedFields, relaytoken.FieldRawData)
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *RelayTokenMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *RelayTokenMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *RelayTokenMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *RelayTokenMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *RelayTokenMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the RelayToken entity.
+// If the RelayToken object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RelayTokenMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *RelayTokenMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// ClearChain clears the "chain" edge to the RelayChain entity.
+func (m *RelayTokenMutation) ClearChain() {
+	m.clearedchain = true
+	m.clearedFields[relaytoken.FieldChainID] = struct{}{}
+}
+
+// ChainCleared reports if the "chain" edge to the RelayChain entity was cleared.
+func (m *RelayTokenMutation) ChainCleared() bool {
+	return m.clearedchain
+}
+
+// ChainIDs returns the "chain" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ChainID instead. It exists only for internal usage by the builders.
+func (m *RelayTokenMutation) ChainIDs() (ids []int64) {
+	if id := m.chain; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetChain resets all changes to the "chain" edge.
+func (m *RelayTokenMutation) ResetChain() {
+	m.chain = nil
+	m.clearedchain = false
+}
+
+// Where appends a list predicates to the RelayTokenMutation builder.
+func (m *RelayTokenMutation) Where(ps ...predicate.RelayToken) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the RelayTokenMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *RelayTokenMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.RelayToken, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *RelayTokenMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *RelayTokenMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (RelayToken).
+func (m *RelayTokenMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *RelayTokenMutation) Fields() []string {
+	fields := make([]string, 0, 18)
+	if m.token_id != nil {
+		fields = append(fields, relaytoken.FieldTokenID)
+	}
+	if m.chain != nil {
+		fields = append(fields, relaytoken.FieldChainID)
+	}
+	if m.address != nil {
+		fields = append(fields, relaytoken.FieldAddress)
+	}
+	if m.name != nil {
+		fields = append(fields, relaytoken.FieldName)
+	}
+	if m.symbol != nil {
+		fields = append(fields, relaytoken.FieldSymbol)
+	}
+	if m.logo_url != nil {
+		fields = append(fields, relaytoken.FieldLogoURL)
+	}
+	if m.decimals != nil {
+		fields = append(fields, relaytoken.FieldDecimals)
+	}
+	if m.native != nil {
+		fields = append(fields, relaytoken.FieldNative)
+	}
+	if m.stablecoin != nil {
+		fields = append(fields, relaytoken.FieldStablecoin)
+	}
+	if m.supports_bridging != nil {
+		fields = append(fields, relaytoken.FieldSupportsBridging)
+	}
+	if m.supports_permit != nil {
+		fields = append(fields, relaytoken.FieldSupportsPermit)
+	}
+	if m.is_featured != nil {
+		fields = append(fields, relaytoken.FieldIsFeatured)
+	}
+	if m.is_solver != nil {
+		fields = append(fields, relaytoken.FieldIsSolver)
+	}
+	if m.is_erc20 != nil {
+		fields = append(fields, relaytoken.FieldIsErc20)
+	}
+	if m.supported != nil {
+		fields = append(fields, relaytoken.FieldSupported)
+	}
+	if m.raw_data != nil {
+		fields = append(fields, relaytoken.FieldRawData)
+	}
+	if m.created_at != nil {
+		fields = append(fields, relaytoken.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, relaytoken.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *RelayTokenMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case relaytoken.FieldTokenID:
+		return m.TokenID()
+	case relaytoken.FieldChainID:
+		return m.ChainID()
+	case relaytoken.FieldAddress:
+		return m.Address()
+	case relaytoken.FieldName:
+		return m.Name()
+	case relaytoken.FieldSymbol:
+		return m.Symbol()
+	case relaytoken.FieldLogoURL:
+		return m.LogoURL()
+	case relaytoken.FieldDecimals:
+		return m.Decimals()
+	case relaytoken.FieldNative:
+		return m.Native()
+	case relaytoken.FieldStablecoin:
+		return m.Stablecoin()
+	case relaytoken.FieldSupportsBridging:
+		return m.SupportsBridging()
+	case relaytoken.FieldSupportsPermit:
+		return m.SupportsPermit()
+	case relaytoken.FieldIsFeatured:
+		return m.IsFeatured()
+	case relaytoken.FieldIsSolver:
+		return m.IsSolver()
+	case relaytoken.FieldIsErc20:
+		return m.IsErc20()
+	case relaytoken.FieldSupported:
+		return m.Supported()
+	case relaytoken.FieldRawData:
+		return m.RawData()
+	case relaytoken.FieldCreatedAt:
+		return m.CreatedAt()
+	case relaytoken.FieldUpdatedAt:
+		return m.UpdatedAt()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *RelayTokenMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case relaytoken.FieldTokenID:
+		return m.OldTokenID(ctx)
+	case relaytoken.FieldChainID:
+		return m.OldChainID(ctx)
+	case relaytoken.FieldAddress:
+		return m.OldAddress(ctx)
+	case relaytoken.FieldName:
+		return m.OldName(ctx)
+	case relaytoken.FieldSymbol:
+		return m.OldSymbol(ctx)
+	case relaytoken.FieldLogoURL:
+		return m.OldLogoURL(ctx)
+	case relaytoken.FieldDecimals:
+		return m.OldDecimals(ctx)
+	case relaytoken.FieldNative:
+		return m.OldNative(ctx)
+	case relaytoken.FieldStablecoin:
+		return m.OldStablecoin(ctx)
+	case relaytoken.FieldSupportsBridging:
+		return m.OldSupportsBridging(ctx)
+	case relaytoken.FieldSupportsPermit:
+		return m.OldSupportsPermit(ctx)
+	case relaytoken.FieldIsFeatured:
+		return m.OldIsFeatured(ctx)
+	case relaytoken.FieldIsSolver:
+		return m.OldIsSolver(ctx)
+	case relaytoken.FieldIsErc20:
+		return m.OldIsErc20(ctx)
+	case relaytoken.FieldSupported:
+		return m.OldSupported(ctx)
+	case relaytoken.FieldRawData:
+		return m.OldRawData(ctx)
+	case relaytoken.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case relaytoken.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	}
+	return nil, fmt.Errorf("unknown RelayToken field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RelayTokenMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case relaytoken.FieldTokenID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTokenID(v)
+		return nil
+	case relaytoken.FieldChainID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetChainID(v)
+		return nil
+	case relaytoken.FieldAddress:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAddress(v)
+		return nil
+	case relaytoken.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case relaytoken.FieldSymbol:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSymbol(v)
+		return nil
+	case relaytoken.FieldLogoURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLogoURL(v)
+		return nil
+	case relaytoken.FieldDecimals:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDecimals(v)
+		return nil
+	case relaytoken.FieldNative:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetNative(v)
+		return nil
+	case relaytoken.FieldStablecoin:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStablecoin(v)
+		return nil
+	case relaytoken.FieldSupportsBridging:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupportsBridging(v)
+		return nil
+	case relaytoken.FieldSupportsPermit:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupportsPermit(v)
+		return nil
+	case relaytoken.FieldIsFeatured:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsFeatured(v)
+		return nil
+	case relaytoken.FieldIsSolver:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsSolver(v)
+		return nil
+	case relaytoken.FieldIsErc20:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsErc20(v)
+		return nil
+	case relaytoken.FieldSupported:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSupported(v)
+		return nil
+	case relaytoken.FieldRawData:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRawData(v)
+		return nil
+	case relaytoken.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case relaytoken.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RelayToken field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *RelayTokenMutation) AddedFields() []string {
+	var fields []string
+	if m.adddecimals != nil {
+		fields = append(fields, relaytoken.FieldDecimals)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *RelayTokenMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case relaytoken.FieldDecimals:
+		return m.AddedDecimals()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *RelayTokenMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case relaytoken.FieldDecimals:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDecimals(v)
+		return nil
+	}
+	return fmt.Errorf("unknown RelayToken numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *RelayTokenMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(relaytoken.FieldName) {
+		fields = append(fields, relaytoken.FieldName)
+	}
+	if m.FieldCleared(relaytoken.FieldLogoURL) {
+		fields = append(fields, relaytoken.FieldLogoURL)
+	}
+	if m.FieldCleared(relaytoken.FieldRawData) {
+		fields = append(fields, relaytoken.FieldRawData)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *RelayTokenMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *RelayTokenMutation) ClearField(name string) error {
+	switch name {
+	case relaytoken.FieldName:
+		m.ClearName()
+		return nil
+	case relaytoken.FieldLogoURL:
+		m.ClearLogoURL()
+		return nil
+	case relaytoken.FieldRawData:
+		m.ClearRawData()
+		return nil
+	}
+	return fmt.Errorf("unknown RelayToken nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *RelayTokenMutation) ResetField(name string) error {
+	switch name {
+	case relaytoken.FieldTokenID:
+		m.ResetTokenID()
+		return nil
+	case relaytoken.FieldChainID:
+		m.ResetChainID()
+		return nil
+	case relaytoken.FieldAddress:
+		m.ResetAddress()
+		return nil
+	case relaytoken.FieldName:
+		m.ResetName()
+		return nil
+	case relaytoken.FieldSymbol:
+		m.ResetSymbol()
+		return nil
+	case relaytoken.FieldLogoURL:
+		m.ResetLogoURL()
+		return nil
+	case relaytoken.FieldDecimals:
+		m.ResetDecimals()
+		return nil
+	case relaytoken.FieldNative:
+		m.ResetNative()
+		return nil
+	case relaytoken.FieldStablecoin:
+		m.ResetStablecoin()
+		return nil
+	case relaytoken.FieldSupportsBridging:
+		m.ResetSupportsBridging()
+		return nil
+	case relaytoken.FieldSupportsPermit:
+		m.ResetSupportsPermit()
+		return nil
+	case relaytoken.FieldIsFeatured:
+		m.ResetIsFeatured()
+		return nil
+	case relaytoken.FieldIsSolver:
+		m.ResetIsSolver()
+		return nil
+	case relaytoken.FieldIsErc20:
+		m.ResetIsErc20()
+		return nil
+	case relaytoken.FieldSupported:
+		m.ResetSupported()
+		return nil
+	case relaytoken.FieldRawData:
+		m.ResetRawData()
+		return nil
+	case relaytoken.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case relaytoken.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown RelayToken field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *RelayTokenMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.chain != nil {
+		edges = append(edges, relaytoken.EdgeChain)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *RelayTokenMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case relaytoken.EdgeChain:
+		if id := m.chain; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *RelayTokenMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *RelayTokenMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *RelayTokenMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedchain {
+		edges = append(edges, relaytoken.EdgeChain)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *RelayTokenMutation) EdgeCleared(name string) bool {
+	switch name {
+	case relaytoken.EdgeChain:
+		return m.clearedchain
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *RelayTokenMutation) ClearEdge(name string) error {
+	switch name {
+	case relaytoken.EdgeChain:
+		m.ClearChain()
+		return nil
+	}
+	return fmt.Errorf("unknown RelayToken unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *RelayTokenMutation) ResetEdge(name string) error {
+	switch name {
+	case relaytoken.EdgeChain:
+		m.ResetChain()
+		return nil
+	}
+	return fmt.Errorf("unknown RelayToken edge %s", name)
+}
 
 // TaskMutation represents an operation that mutates the Task nodes in the graph.
 type TaskMutation struct {

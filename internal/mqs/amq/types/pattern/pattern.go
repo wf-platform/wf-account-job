@@ -2,3 +2,5 @@
 package pattern
 
 const RecordHelloWorld = "hello_world"
+
+const RelayChains = "relay_chains"

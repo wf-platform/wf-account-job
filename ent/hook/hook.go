@@ -5,9 +5,32 @@ package hook
 import (
 	"context"
 	"fmt"
-
 	"wf-account-job/ent"
 )
+
+// The RelayChainFunc type is an adapter to allow the use of ordinary
+// function as RelayChain mutator.
+type RelayChainFunc func(context.Context, *ent.RelayChainMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RelayChainFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RelayChainMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RelayChainMutation", m)
+}
+
+// The RelayTokenFunc type is an adapter to allow the use of ordinary
+// function as RelayToken mutator.
+type RelayTokenFunc func(context.Context, *ent.RelayTokenMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f RelayTokenFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.RelayTokenMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RelayTokenMutation", m)
+}
 
 // The TaskFunc type is an adapter to allow the use of ordinary
 // function as Task mutator.

@@ -45,4 +45,6 @@ message BaseUUIDResp {
 service Job {
   // group: base
   rpc initDatabase (Empty) returns (BaseResp);
+  // group: base
+  rpc initRelayTables (Empty) returns (BaseResp);
 }

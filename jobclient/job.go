@@ -13,24 +13,33 @@ import (
 )
 
 type (
-	BaseIDResp      = job.BaseIDResp
-	BaseResp        = job.BaseResp
-	BaseUUIDResp    = job.BaseUUIDResp
-	Empty           = job.Empty
-	IDReq           = job.IDReq
-	IDsReq          = job.IDsReq
-	PageInfoReq     = job.PageInfoReq
-	TaskInfo        = job.TaskInfo
-	TaskListReq     = job.TaskListReq
-	TaskListResp    = job.TaskListResp
-	TaskLogInfo     = job.TaskLogInfo
-	TaskLogListReq  = job.TaskLogListReq
-	TaskLogListResp = job.TaskLogListResp
-	UUIDReq         = job.UUIDReq
-	UUIDsReq        = job.UUIDsReq
+	BaseIDResp         = job.BaseIDResp
+	BaseResp           = job.BaseResp
+	BaseUUIDResp       = job.BaseUUIDResp
+	Empty              = job.Empty
+	IDReq              = job.IDReq
+	IDsReq             = job.IDsReq
+	PageInfoReq        = job.PageInfoReq
+	RelayChainIDReq    = job.RelayChainIDReq
+	RelayChainInfo     = job.RelayChainInfo
+	RelayChainListReq  = job.RelayChainListReq
+	RelayChainListResp = job.RelayChainListResp
+	RelayTokenInfo     = job.RelayTokenInfo
+	RelayTokenKeyReq   = job.RelayTokenKeyReq
+	RelayTokenListReq  = job.RelayTokenListReq
+	RelayTokenListResp = job.RelayTokenListResp
+	TaskInfo           = job.TaskInfo
+	TaskListReq        = job.TaskListReq
+	TaskListResp       = job.TaskListResp
+	TaskLogInfo        = job.TaskLogInfo
+	TaskLogListReq     = job.TaskLogListReq
+	TaskLogListResp    = job.TaskLogListResp
+	UUIDReq            = job.UUIDReq
+	UUIDsReq           = job.UUIDsReq
 
 	Job interface {
 		InitDatabase(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*BaseResp, error)
+		InitRelayTables(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*BaseResp, error)
 		// Task management
 		CreateTask(ctx context.Context, in *TaskInfo, opts ...grpc.CallOption) (*BaseIDResp, error)
 		UpdateTask(ctx context.Context, in *TaskInfo, opts ...grpc.CallOption) (*BaseResp, error)
@@ -43,6 +52,12 @@ type (
 		GetTaskLogList(ctx context.Context, in *TaskLogListReq, opts ...grpc.CallOption) (*TaskLogListResp, error)
 		GetTaskLogById(ctx context.Context, in *IDReq, opts ...grpc.CallOption) (*TaskLogInfo, error)
 		DeleteTaskLog(ctx context.Context, in *IDsReq, opts ...grpc.CallOption) (*BaseResp, error)
+		// RelayChain query
+		GetRelayChainList(ctx context.Context, in *RelayChainListReq, opts ...grpc.CallOption) (*RelayChainListResp, error)
+		GetRelayChainById(ctx context.Context, in *RelayChainIDReq, opts ...grpc.CallOption) (*RelayChainInfo, error)
+		// RelayToken query
+		GetRelayTokenList(ctx context.Context, in *RelayTokenListReq, opts ...grpc.CallOption) (*RelayTokenListResp, error)
+		GetRelayTokenByChainAndId(ctx context.Context, in *RelayTokenKeyReq, opts ...grpc.CallOption) (*RelayTokenInfo, error)
 	}
 
 	defaultJob struct {
@@ -59,6 +74,11 @@ func NewJob(cli zrpc.Client) Job {
 func (m *defaultJob) InitDatabase(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := job.NewJobClient(m.cli.Conn())
 	return client.InitDatabase(ctx, in, opts...)
+}
+
+func (m *defaultJob) InitRelayTables(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*BaseResp, error) {
+	client := job.NewJobClient(m.cli.Conn())
+	return client.InitRelayTables(ctx, in, opts...)
 }
 
 // Task management
@@ -111,4 +131,26 @@ func (m *defaultJob) GetTaskLogById(ctx context.Context, in *IDReq, opts ...grpc
 func (m *defaultJob) DeleteTaskLog(ctx context.Context, in *IDsReq, opts ...grpc.CallOption) (*BaseResp, error) {
 	client := job.NewJobClient(m.cli.Conn())
 	return client.DeleteTaskLog(ctx, in, opts...)
+}
+
+// RelayChain query
+func (m *defaultJob) GetRelayChainList(ctx context.Context, in *RelayChainListReq, opts ...grpc.CallOption) (*RelayChainListResp, error) {
+	client := job.NewJobClient(m.cli.Conn())
+	return client.GetRelayChainList(ctx, in, opts...)
+}
+
+func (m *defaultJob) GetRelayChainById(ctx context.Context, in *RelayChainIDReq, opts ...grpc.CallOption) (*RelayChainInfo, error) {
+	client := job.NewJobClient(m.cli.Conn())
+	return client.GetRelayChainById(ctx, in, opts...)
+}
+
+// RelayToken query
+func (m *defaultJob) GetRelayTokenList(ctx context.Context, in *RelayTokenListReq, opts ...grpc.CallOption) (*RelayTokenListResp, error) {
+	client := job.NewJobClient(m.cli.Conn())
+	return client.GetRelayTokenList(ctx, in, opts...)
+}
+
+func (m *defaultJob) GetRelayTokenByChainAndId(ctx context.Context, in *RelayTokenKeyReq, opts ...grpc.CallOption) (*RelayTokenInfo, error) {
+	client := job.NewJobClient(m.cli.Conn())
+	return client.GetRelayTokenByChainAndId(ctx, in, opts...)
 }

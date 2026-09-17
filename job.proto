@@ -86,9 +86,97 @@ message UUIDsReq {
   repeated string ids = 1;
 }
 
+message RelayChainIDReq {
+  int64 id = 1;
+}
+
+message RelayTokenKeyReq {
+  int64 chain_id = 1;
+  string id = 2;
+}
+
+message RelayChainInfo {
+  int64 id = 1;
+  optional int64 created_at = 2;
+  optional int64 updated_at = 3;
+  optional string slug = 4;
+  optional string name = 5;
+  optional string logo_url = 6;
+  optional string type = 7;
+  optional string vm_type = 8;
+  optional string protocol = 9;
+  optional string base_chain_id = 10;
+  optional string explorer_url = 11;
+  optional string explorer_name = 12;
+  optional string rpc_url = 13;
+  optional string ws_rpc_url = 14;
+  optional string native_symbol = 15;
+  optional int64 native_decimals = 16;
+  optional bool deposit_enabled = 17;
+  optional string token_support = 18;
+  optional bool disabled = 19;
+  optional bool supported = 20;
+  optional bool enabled = 21;
+  optional string raw_data = 22;
+}
+
+message RelayChainListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  repeated int64 ids = 3;
+  optional string name = 4;
+  optional string type = 5;
+  optional bool enabled = 6;
+  optional bool supported = 7;
+}
+
+message RelayChainListResp {
+  uint64 total = 1;
+  repeated RelayChainInfo data = 2;
+}
+
+message RelayTokenInfo {
+  string id = 1;
+  int64 chain_id = 2;
+  optional int64 created_at = 3;
+  optional int64 updated_at = 4;
+  optional string address = 5;
+  optional string name = 6;
+  optional string symbol = 7;
+  optional string logo_url = 8;
+  optional int64 decimals = 9;
+  optional bool native = 10;
+  optional bool stablecoin = 11;
+  optional bool supports_bridging = 12;
+  optional bool supports_permit = 13;
+  optional bool is_featured = 14;
+  optional bool is_solver = 15;
+  optional bool is_erc20 = 16;
+  optional bool supported = 17;
+  optional string raw_data = 18;
+}
+
+message RelayTokenListReq {
+  uint64 page = 1;
+  uint64 page_size = 2;
+  repeated int64 chain_ids = 3;
+  repeated string ids = 4;
+  optional string name = 5;
+  optional string symbol = 6;
+  optional string address = 7;
+  optional bool supported = 8;
+}
+
+message RelayTokenListResp {
+  uint64 total = 1;
+  repeated RelayTokenInfo data = 2;
+}
+
 service Job {
   //  group: base
   rpc initDatabase(Empty) returns (BaseResp);
+  //  group: base
+  rpc initRelayTables(Empty) returns (BaseResp);
   //  Task management
   //  group: task
   rpc createTask(TaskInfo) returns (BaseIDResp);
@@ -111,5 +199,14 @@ service Job {
   rpc getTaskLogById(IDReq) returns (TaskLogInfo);
   //  group: tasklog
   rpc deleteTaskLog(IDsReq) returns (BaseResp);
+  //  RelayChain query
+  //  group: relay
+  rpc getRelayChainList(RelayChainListReq) returns (RelayChainListResp);
+  //  group: relay
+  rpc getRelayChainById(RelayChainIDReq) returns (RelayChainInfo);
+  //  RelayToken query
+  //  group: relay
+  rpc getRelayTokenList(RelayTokenListReq) returns (RelayTokenListResp);
+  //  group: relay
+  rpc getRelayTokenByChainAndId(RelayTokenKeyReq) returns (RelayTokenInfo);
 }
-

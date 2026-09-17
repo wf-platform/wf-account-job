@@ -4,12 +4,12 @@ package ent
 
 import (
 	"context"
+	"wf-account-job/ent/predicate"
+	"wf-account-job/ent/tasklog"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/tasklog"
 )
 
 // TaskLogDelete is the builder for deleting a TaskLog entity.

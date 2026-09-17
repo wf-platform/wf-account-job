@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"math"
 	"wf-account-job/ent/predicate"
-	"wf-account-job/ent/task"
-	"wf-account-job/ent/tasklog"
+	"wf-account-job/ent/relaychain"
+	"wf-account-job/ent/relaytoken"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -16,54 +16,53 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// TaskLogQuery is the builder for querying TaskLog entities.
-type TaskLogQuery struct {
+// RelayTokenQuery is the builder for querying RelayToken entities.
+type RelayTokenQuery struct {
 	config
 	ctx        *QueryContext
-	order      []tasklog.OrderOption
+	order      []relaytoken.OrderOption
 	inters     []Interceptor
-	predicates []predicate.TaskLog
-	withTasks  *TaskQuery
-	withFKs    bool
+	predicates []predicate.RelayToken
+	withChain  *RelayChainQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the TaskLogQuery builder.
-func (_q *TaskLogQuery) Where(ps ...predicate.TaskLog) *TaskLogQuery {
+// Where adds a new predicate for the RelayTokenQuery builder.
+func (_q *RelayTokenQuery) Where(ps ...predicate.RelayToken) *RelayTokenQuery {
 	_q.predicates = append(_q.predicates, ps...)
 	return _q
 }
 
 // Limit the number of records to be returned by this query.
-func (_q *TaskLogQuery) Limit(limit int) *TaskLogQuery {
+func (_q *RelayTokenQuery) Limit(limit int) *RelayTokenQuery {
 	_q.ctx.Limit = &limit
 	return _q
 }
 
 // Offset to start from.
-func (_q *TaskLogQuery) Offset(offset int) *TaskLogQuery {
+func (_q *RelayTokenQuery) Offset(offset int) *RelayTokenQuery {
 	_q.ctx.Offset = &offset
 	return _q
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (_q *TaskLogQuery) Unique(unique bool) *TaskLogQuery {
+func (_q *RelayTokenQuery) Unique(unique bool) *RelayTokenQuery {
 	_q.ctx.Unique = &unique
 	return _q
 }
 
 // Order specifies how the records should be ordered.
-func (_q *TaskLogQuery) Order(o ...tasklog.OrderOption) *TaskLogQuery {
+func (_q *RelayTokenQuery) Order(o ...relaytoken.OrderOption) *RelayTokenQuery {
 	_q.order = append(_q.order, o...)
 	return _q
 }
 
-// QueryTasks chains the current query on the "tasks" edge.
-func (_q *TaskLogQuery) QueryTasks() *TaskQuery {
-	query := (&TaskClient{config: _q.config}).Query()
+// QueryChain chains the current query on the "chain" edge.
+func (_q *RelayTokenQuery) QueryChain() *RelayChainQuery {
+	query := (&RelayChainClient{config: _q.config}).Query()
 	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
 		if err := _q.prepareQuery(ctx); err != nil {
 			return nil, err
@@ -73,9 +72,9 @@ func (_q *TaskLogQuery) QueryTasks() *TaskQuery {
 			return nil, err
 		}
 		step := sqlgraph.NewStep(
-			sqlgraph.From(tasklog.Table, tasklog.FieldID, selector),
-			sqlgraph.To(task.Table, task.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, tasklog.TasksTable, tasklog.TasksColumn),
+			sqlgraph.From(relaytoken.Table, relaytoken.FieldID, selector),
+			sqlgraph.To(relaychain.Table, relaychain.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, relaytoken.ChainTable, relaytoken.ChainColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(_q.driver.Dialect(), step)
 		return fromU, nil
@@ -83,21 +82,21 @@ func (_q *TaskLogQuery) QueryTasks() *TaskQuery {
 	return query
 }
 
-// First returns the first TaskLog entity from the query.
-// Returns a *NotFoundError when no TaskLog was found.
-func (_q *TaskLogQuery) First(ctx context.Context) (*TaskLog, error) {
+// First returns the first RelayToken entity from the query.
+// Returns a *NotFoundError when no RelayToken was found.
+func (_q *RelayTokenQuery) First(ctx context.Context) (*RelayToken, error) {
 	nodes, err := _q.Limit(1).All(setContextOp(ctx, _q.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{tasklog.Label}
+		return nil, &NotFoundError{relaytoken.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (_q *TaskLogQuery) FirstX(ctx context.Context) *TaskLog {
+func (_q *RelayTokenQuery) FirstX(ctx context.Context) *RelayToken {
 	node, err := _q.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -105,22 +104,22 @@ func (_q *TaskLogQuery) FirstX(ctx context.Context) *TaskLog {
 	return node
 }
 
-// FirstID returns the first TaskLog ID from the query.
-// Returns a *NotFoundError when no TaskLog ID was found.
-func (_q *TaskLogQuery) FirstID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+// FirstID returns the first RelayToken ID from the query.
+// Returns a *NotFoundError when no RelayToken ID was found.
+func (_q *RelayTokenQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{tasklog.Label}
+		err = &NotFoundError{relaytoken.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *TaskLogQuery) FirstIDX(ctx context.Context) uint64 {
+func (_q *RelayTokenQuery) FirstIDX(ctx context.Context) int {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -128,10 +127,10 @@ func (_q *TaskLogQuery) FirstIDX(ctx context.Context) uint64 {
 	return id
 }
 
-// Only returns a single TaskLog entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one TaskLog entity is found.
-// Returns a *NotFoundError when no TaskLog entities are found.
-func (_q *TaskLogQuery) Only(ctx context.Context) (*TaskLog, error) {
+// Only returns a single RelayToken entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one RelayToken entity is found.
+// Returns a *NotFoundError when no RelayToken entities are found.
+func (_q *RelayTokenQuery) Only(ctx context.Context) (*RelayToken, error) {
 	nodes, err := _q.Limit(2).All(setContextOp(ctx, _q.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
@@ -140,14 +139,14 @@ func (_q *TaskLogQuery) Only(ctx context.Context) (*TaskLog, error) {
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{tasklog.Label}
+		return nil, &NotFoundError{relaytoken.Label}
 	default:
-		return nil, &NotSingularError{tasklog.Label}
+		return nil, &NotSingularError{relaytoken.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (_q *TaskLogQuery) OnlyX(ctx context.Context) *TaskLog {
+func (_q *RelayTokenQuery) OnlyX(ctx context.Context) *RelayToken {
 	node, err := _q.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -155,11 +154,11 @@ func (_q *TaskLogQuery) OnlyX(ctx context.Context) *TaskLog {
 	return node
 }
 
-// OnlyID is like Only, but returns the only TaskLog ID in the query.
-// Returns a *NotSingularError when more than one TaskLog ID is found.
+// OnlyID is like Only, but returns the only RelayToken ID in the query.
+// Returns a *NotSingularError when more than one RelayToken ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *TaskLogQuery) OnlyID(ctx context.Context) (id uint64, err error) {
-	var ids []uint64
+func (_q *RelayTokenQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -167,15 +166,15 @@ func (_q *TaskLogQuery) OnlyID(ctx context.Context) (id uint64, err error) {
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{tasklog.Label}
+		err = &NotFoundError{relaytoken.Label}
 	default:
-		err = &NotSingularError{tasklog.Label}
+		err = &NotSingularError{relaytoken.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *TaskLogQuery) OnlyIDX(ctx context.Context) uint64 {
+func (_q *RelayTokenQuery) OnlyIDX(ctx context.Context) int {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -183,18 +182,18 @@ func (_q *TaskLogQuery) OnlyIDX(ctx context.Context) uint64 {
 	return id
 }
 
-// All executes the query and returns a list of TaskLogs.
-func (_q *TaskLogQuery) All(ctx context.Context) ([]*TaskLog, error) {
+// All executes the query and returns a list of RelayTokens.
+func (_q *RelayTokenQuery) All(ctx context.Context) ([]*RelayToken, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryAll)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*TaskLog, *TaskLogQuery]()
-	return withInterceptors[[]*TaskLog](ctx, _q, qr, _q.inters)
+	qr := querierAll[[]*RelayToken, *RelayTokenQuery]()
+	return withInterceptors[[]*RelayToken](ctx, _q, qr, _q.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (_q *TaskLogQuery) AllX(ctx context.Context) []*TaskLog {
+func (_q *RelayTokenQuery) AllX(ctx context.Context) []*RelayToken {
 	nodes, err := _q.All(ctx)
 	if err != nil {
 		panic(err)
@@ -202,20 +201,20 @@ func (_q *TaskLogQuery) AllX(ctx context.Context) []*TaskLog {
 	return nodes
 }
 
-// IDs executes the query and returns a list of TaskLog IDs.
-func (_q *TaskLogQuery) IDs(ctx context.Context) (ids []uint64, err error) {
+// IDs executes the query and returns a list of RelayToken IDs.
+func (_q *RelayTokenQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryIDs)
-	if err = _q.Select(tasklog.FieldID).Scan(ctx, &ids); err != nil {
+	if err = _q.Select(relaytoken.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *TaskLogQuery) IDsX(ctx context.Context) []uint64 {
+func (_q *RelayTokenQuery) IDsX(ctx context.Context) []int {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -224,16 +223,16 @@ func (_q *TaskLogQuery) IDsX(ctx context.Context) []uint64 {
 }
 
 // Count returns the count of the given query.
-func (_q *TaskLogQuery) Count(ctx context.Context) (int, error) {
+func (_q *RelayTokenQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryCount)
 	if err := _q.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, _q, querierCount[*TaskLogQuery](), _q.inters)
+	return withInterceptors[int](ctx, _q, querierCount[*RelayTokenQuery](), _q.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (_q *TaskLogQuery) CountX(ctx context.Context) int {
+func (_q *RelayTokenQuery) CountX(ctx context.Context) int {
 	count, err := _q.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -242,7 +241,7 @@ func (_q *TaskLogQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (_q *TaskLogQuery) Exist(ctx context.Context) (bool, error) {
+func (_q *RelayTokenQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, _q.ctx, ent.OpQueryExist)
 	switch _, err := _q.FirstID(ctx); {
 	case IsNotFound(err):
@@ -255,7 +254,7 @@ func (_q *TaskLogQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (_q *TaskLogQuery) ExistX(ctx context.Context) bool {
+func (_q *RelayTokenQuery) ExistX(ctx context.Context) bool {
 	exist, err := _q.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -263,33 +262,33 @@ func (_q *TaskLogQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the TaskLogQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the RelayTokenQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (_q *TaskLogQuery) Clone() *TaskLogQuery {
+func (_q *RelayTokenQuery) Clone() *RelayTokenQuery {
 	if _q == nil {
 		return nil
 	}
-	return &TaskLogQuery{
+	return &RelayTokenQuery{
 		config:     _q.config,
 		ctx:        _q.ctx.Clone(),
-		order:      append([]tasklog.OrderOption{}, _q.order...),
+		order:      append([]relaytoken.OrderOption{}, _q.order...),
 		inters:     append([]Interceptor{}, _q.inters...),
-		predicates: append([]predicate.TaskLog{}, _q.predicates...),
-		withTasks:  _q.withTasks.Clone(),
+		predicates: append([]predicate.RelayToken{}, _q.predicates...),
+		withChain:  _q.withChain.Clone(),
 		// clone intermediate query.
 		sql:  _q.sql.Clone(),
 		path: _q.path,
 	}
 }
 
-// WithTasks tells the query-builder to eager-load the nodes that are connected to
-// the "tasks" edge. The optional arguments are used to configure the query builder of the edge.
-func (_q *TaskLogQuery) WithTasks(opts ...func(*TaskQuery)) *TaskLogQuery {
-	query := (&TaskClient{config: _q.config}).Query()
+// WithChain tells the query-builder to eager-load the nodes that are connected to
+// the "chain" edge. The optional arguments are used to configure the query builder of the edge.
+func (_q *RelayTokenQuery) WithChain(opts ...func(*RelayChainQuery)) *RelayTokenQuery {
+	query := (&RelayChainClient{config: _q.config}).Query()
 	for _, opt := range opts {
 		opt(query)
 	}
-	_q.withTasks = query
+	_q.withChain = query
 	return _q
 }
 
@@ -299,19 +298,19 @@ func (_q *TaskLogQuery) WithTasks(opts ...func(*TaskQuery)) *TaskLogQuery {
 // Example:
 //
 //	var v []struct {
-//		StartedAt time.Time `json:"started_at,omitempty"`
+//		TokenID string `json:"token_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.TaskLog.Query().
-//		GroupBy(tasklog.FieldStartedAt).
+//	client.RelayToken.Query().
+//		GroupBy(relaytoken.FieldTokenID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (_q *TaskLogQuery) GroupBy(field string, fields ...string) *TaskLogGroupBy {
+func (_q *RelayTokenQuery) GroupBy(field string, fields ...string) *RelayTokenGroupBy {
 	_q.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &TaskLogGroupBy{build: _q}
+	grbuild := &RelayTokenGroupBy{build: _q}
 	grbuild.flds = &_q.ctx.Fields
-	grbuild.label = tasklog.Label
+	grbuild.label = relaytoken.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -322,26 +321,26 @@ func (_q *TaskLogQuery) GroupBy(field string, fields ...string) *TaskLogGroupBy 
 // Example:
 //
 //	var v []struct {
-//		StartedAt time.Time `json:"started_at,omitempty"`
+//		TokenID string `json:"token_id,omitempty"`
 //	}
 //
-//	client.TaskLog.Query().
-//		Select(tasklog.FieldStartedAt).
+//	client.RelayToken.Query().
+//		Select(relaytoken.FieldTokenID).
 //		Scan(ctx, &v)
-func (_q *TaskLogQuery) Select(fields ...string) *TaskLogSelect {
+func (_q *RelayTokenQuery) Select(fields ...string) *RelayTokenSelect {
 	_q.ctx.Fields = append(_q.ctx.Fields, fields...)
-	sbuild := &TaskLogSelect{TaskLogQuery: _q}
-	sbuild.label = tasklog.Label
+	sbuild := &RelayTokenSelect{RelayTokenQuery: _q}
+	sbuild.label = relaytoken.Label
 	sbuild.flds, sbuild.scan = &_q.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a TaskLogSelect configured with the given aggregations.
-func (_q *TaskLogQuery) Aggregate(fns ...AggregateFunc) *TaskLogSelect {
+// Aggregate returns a RelayTokenSelect configured with the given aggregations.
+func (_q *RelayTokenQuery) Aggregate(fns ...AggregateFunc) *RelayTokenSelect {
 	return _q.Select().Aggregate(fns...)
 }
 
-func (_q *TaskLogQuery) prepareQuery(ctx context.Context) error {
+func (_q *RelayTokenQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range _q.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -353,7 +352,7 @@ func (_q *TaskLogQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range _q.ctx.Fields {
-		if !tasklog.ValidColumn(f) {
+		if !relaytoken.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -367,26 +366,19 @@ func (_q *TaskLogQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (_q *TaskLogQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*TaskLog, error) {
+func (_q *RelayTokenQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*RelayToken, error) {
 	var (
-		nodes       = []*TaskLog{}
-		withFKs     = _q.withFKs
+		nodes       = []*RelayToken{}
 		_spec       = _q.querySpec()
 		loadedTypes = [1]bool{
-			_q.withTasks != nil,
+			_q.withChain != nil,
 		}
 	)
-	if _q.withTasks != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, tasklog.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*TaskLog).scanValues(nil, columns)
+		return (*RelayToken).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &TaskLog{config: _q.config}
+		node := &RelayToken{config: _q.config}
 		nodes = append(nodes, node)
 		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
@@ -400,23 +392,20 @@ func (_q *TaskLogQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Task
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := _q.withTasks; query != nil {
-		if err := _q.loadTasks(ctx, query, nodes, nil,
-			func(n *TaskLog, e *Task) { n.Edges.Tasks = e }); err != nil {
+	if query := _q.withChain; query != nil {
+		if err := _q.loadChain(ctx, query, nodes, nil,
+			func(n *RelayToken, e *RelayChain) { n.Edges.Chain = e }); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
 }
 
-func (_q *TaskLogQuery) loadTasks(ctx context.Context, query *TaskQuery, nodes []*TaskLog, init func(*TaskLog), assign func(*TaskLog, *Task)) error {
-	ids := make([]uint64, 0, len(nodes))
-	nodeids := make(map[uint64][]*TaskLog)
+func (_q *RelayTokenQuery) loadChain(ctx context.Context, query *RelayChainQuery, nodes []*RelayToken, init func(*RelayToken), assign func(*RelayToken, *RelayChain)) error {
+	ids := make([]int64, 0, len(nodes))
+	nodeids := make(map[int64][]*RelayToken)
 	for i := range nodes {
-		if nodes[i].task_task_logs == nil {
-			continue
-		}
-		fk := *nodes[i].task_task_logs
+		fk := nodes[i].ChainID
 		if _, ok := nodeids[fk]; !ok {
 			ids = append(ids, fk)
 		}
@@ -425,7 +414,7 @@ func (_q *TaskLogQuery) loadTasks(ctx context.Context, query *TaskQuery, nodes [
 	if len(ids) == 0 {
 		return nil
 	}
-	query.Where(task.IDIn(ids...))
+	query.Where(relaychain.IDIn(ids...))
 	neighbors, err := query.All(ctx)
 	if err != nil {
 		return err
@@ -433,7 +422,7 @@ func (_q *TaskLogQuery) loadTasks(ctx context.Context, query *TaskQuery, nodes [
 	for _, n := range neighbors {
 		nodes, ok := nodeids[n.ID]
 		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "task_task_logs" returned %v`, n.ID)
+			return fmt.Errorf(`unexpected foreign-key "chain_id" returned %v`, n.ID)
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
@@ -442,7 +431,7 @@ func (_q *TaskLogQuery) loadTasks(ctx context.Context, query *TaskQuery, nodes [
 	return nil
 }
 
-func (_q *TaskLogQuery) sqlCount(ctx context.Context) (int, error) {
+func (_q *RelayTokenQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := _q.querySpec()
 	_spec.Node.Columns = _q.ctx.Fields
 	if len(_q.ctx.Fields) > 0 {
@@ -451,8 +440,8 @@ func (_q *TaskLogQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, _q.driver, _spec)
 }
 
-func (_q *TaskLogQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(tasklog.Table, tasklog.Columns, sqlgraph.NewFieldSpec(tasklog.FieldID, field.TypeUint64))
+func (_q *RelayTokenQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(relaytoken.Table, relaytoken.Columns, sqlgraph.NewFieldSpec(relaytoken.FieldID, field.TypeInt))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -461,11 +450,14 @@ func (_q *TaskLogQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := _q.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, tasklog.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, relaytoken.FieldID)
 		for i := range fields {
-			if fields[i] != tasklog.FieldID {
+			if fields[i] != relaytoken.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if _q.withChain != nil {
+			_spec.Node.AddColumnOnce(relaytoken.FieldChainID)
 		}
 	}
 	if ps := _q.predicates; len(ps) > 0 {
@@ -491,12 +483,12 @@ func (_q *TaskLogQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (_q *TaskLogQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (_q *RelayTokenQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(_q.driver.Dialect())
-	t1 := builder.Table(tasklog.Table)
+	t1 := builder.Table(relaytoken.Table)
 	columns := _q.ctx.Fields
 	if len(columns) == 0 {
-		columns = tasklog.Columns
+		columns = relaytoken.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if _q.sql != nil {
@@ -523,28 +515,28 @@ func (_q *TaskLogQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	return selector
 }
 
-// TaskLogGroupBy is the group-by builder for TaskLog entities.
-type TaskLogGroupBy struct {
+// RelayTokenGroupBy is the group-by builder for RelayToken entities.
+type RelayTokenGroupBy struct {
 	selector
-	build *TaskLogQuery
+	build *RelayTokenQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (_g *TaskLogGroupBy) Aggregate(fns ...AggregateFunc) *TaskLogGroupBy {
+func (_g *RelayTokenGroupBy) Aggregate(fns ...AggregateFunc) *RelayTokenGroupBy {
 	_g.fns = append(_g.fns, fns...)
 	return _g
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_g *TaskLogGroupBy) Scan(ctx context.Context, v any) error {
+func (_g *RelayTokenGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _g.build.ctx, ent.OpQueryGroupBy)
 	if err := _g.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TaskLogQuery, *TaskLogGroupBy](ctx, _g.build, _g, _g.build.inters, v)
+	return scanWithInterceptors[*RelayTokenQuery, *RelayTokenGroupBy](ctx, _g.build, _g, _g.build.inters, v)
 }
 
-func (_g *TaskLogGroupBy) sqlScan(ctx context.Context, root *TaskLogQuery, v any) error {
+func (_g *RelayTokenGroupBy) sqlScan(ctx context.Context, root *RelayTokenQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(_g.fns))
 	for _, fn := range _g.fns {
@@ -571,28 +563,28 @@ func (_g *TaskLogGroupBy) sqlScan(ctx context.Context, root *TaskLogQuery, v any
 	return sql.ScanSlice(rows, v)
 }
 
-// TaskLogSelect is the builder for selecting fields of TaskLog entities.
-type TaskLogSelect struct {
-	*TaskLogQuery
+// RelayTokenSelect is the builder for selecting fields of RelayToken entities.
+type RelayTokenSelect struct {
+	*RelayTokenQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (_s *TaskLogSelect) Aggregate(fns ...AggregateFunc) *TaskLogSelect {
+func (_s *RelayTokenSelect) Aggregate(fns ...AggregateFunc) *RelayTokenSelect {
 	_s.fns = append(_s.fns, fns...)
 	return _s
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (_s *TaskLogSelect) Scan(ctx context.Context, v any) error {
+func (_s *RelayTokenSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, _s.ctx, ent.OpQuerySelect)
 	if err := _s.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*TaskLogQuery, *TaskLogSelect](ctx, _s.TaskLogQuery, _s, _s.inters, v)
+	return scanWithInterceptors[*RelayTokenQuery, *RelayTokenSelect](ctx, _s.RelayTokenQuery, _s, _s.inters, v)
 }
 
-func (_s *TaskLogSelect) sqlScan(ctx context.Context, root *TaskLogQuery, v any) error {
+func (_s *RelayTokenSelect) sqlScan(ctx context.Context, root *RelayTokenQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(_s.fns))
 	for _, fn := range _s.fns {

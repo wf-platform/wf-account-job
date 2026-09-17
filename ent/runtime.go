@@ -4,7 +4,8 @@ package ent
 
 import (
 	"time"
-
+	"wf-account-job/ent/relaychain"
+	"wf-account-job/ent/relaytoken"
 	"wf-account-job/ent/schema"
 	"wf-account-job/ent/task"
 	"wf-account-job/ent/tasklog"
@@ -14,6 +15,114 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	relaychainFields := schema.RelayChain{}.Fields()
+	_ = relaychainFields
+	// relaychainDescName is the schema descriptor for name field.
+	relaychainDescName := relaychainFields[2].Descriptor()
+	// relaychain.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	relaychain.NameValidator = relaychainDescName.Validators[0].(func(string) error)
+	// relaychainDescType is the schema descriptor for type field.
+	relaychainDescType := relaychainFields[4].Descriptor()
+	// relaychain.DefaultType holds the default value on creation for the type field.
+	relaychain.DefaultType = relaychainDescType.Default.(string)
+	// relaychainDescNativeDecimals is the schema descriptor for native_decimals field.
+	relaychainDescNativeDecimals := relaychainFields[13].Descriptor()
+	// relaychain.DefaultNativeDecimals holds the default value on creation for the native_decimals field.
+	relaychain.DefaultNativeDecimals = relaychainDescNativeDecimals.Default.(int)
+	// relaychainDescDepositEnabled is the schema descriptor for deposit_enabled field.
+	relaychainDescDepositEnabled := relaychainFields[14].Descriptor()
+	// relaychain.DefaultDepositEnabled holds the default value on creation for the deposit_enabled field.
+	relaychain.DefaultDepositEnabled = relaychainDescDepositEnabled.Default.(bool)
+	// relaychainDescDisabled is the schema descriptor for disabled field.
+	relaychainDescDisabled := relaychainFields[16].Descriptor()
+	// relaychain.DefaultDisabled holds the default value on creation for the disabled field.
+	relaychain.DefaultDisabled = relaychainDescDisabled.Default.(bool)
+	// relaychainDescSupported is the schema descriptor for supported field.
+	relaychainDescSupported := relaychainFields[17].Descriptor()
+	// relaychain.DefaultSupported holds the default value on creation for the supported field.
+	relaychain.DefaultSupported = relaychainDescSupported.Default.(bool)
+	// relaychainDescEnabled is the schema descriptor for enabled field.
+	relaychainDescEnabled := relaychainFields[18].Descriptor()
+	// relaychain.DefaultEnabled holds the default value on creation for the enabled field.
+	relaychain.DefaultEnabled = relaychainDescEnabled.Default.(bool)
+	// relaychainDescCreatedAt is the schema descriptor for created_at field.
+	relaychainDescCreatedAt := relaychainFields[20].Descriptor()
+	// relaychain.DefaultCreatedAt holds the default value on creation for the created_at field.
+	relaychain.DefaultCreatedAt = relaychainDescCreatedAt.Default.(func() time.Time)
+	// relaychainDescUpdatedAt is the schema descriptor for updated_at field.
+	relaychainDescUpdatedAt := relaychainFields[21].Descriptor()
+	// relaychain.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	relaychain.DefaultUpdatedAt = relaychainDescUpdatedAt.Default.(func() time.Time)
+	// relaychain.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	relaychain.UpdateDefaultUpdatedAt = relaychainDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// relaychainDescID is the schema descriptor for id field.
+	relaychainDescID := relaychainFields[0].Descriptor()
+	// relaychain.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	relaychain.IDValidator = relaychainDescID.Validators[0].(func(int64) error)
+	relaytokenFields := schema.RelayToken{}.Fields()
+	_ = relaytokenFields
+	// relaytokenDescTokenID is the schema descriptor for token_id field.
+	relaytokenDescTokenID := relaytokenFields[0].Descriptor()
+	// relaytoken.TokenIDValidator is a validator for the "token_id" field. It is called by the builders before save.
+	relaytoken.TokenIDValidator = relaytokenDescTokenID.Validators[0].(func(string) error)
+	// relaytokenDescChainID is the schema descriptor for chain_id field.
+	relaytokenDescChainID := relaytokenFields[1].Descriptor()
+	// relaytoken.ChainIDValidator is a validator for the "chain_id" field. It is called by the builders before save.
+	relaytoken.ChainIDValidator = relaytokenDescChainID.Validators[0].(func(int64) error)
+	// relaytokenDescAddress is the schema descriptor for address field.
+	relaytokenDescAddress := relaytokenFields[2].Descriptor()
+	// relaytoken.AddressValidator is a validator for the "address" field. It is called by the builders before save.
+	relaytoken.AddressValidator = relaytokenDescAddress.Validators[0].(func(string) error)
+	// relaytokenDescSymbol is the schema descriptor for symbol field.
+	relaytokenDescSymbol := relaytokenFields[4].Descriptor()
+	// relaytoken.SymbolValidator is a validator for the "symbol" field. It is called by the builders before save.
+	relaytoken.SymbolValidator = relaytokenDescSymbol.Validators[0].(func(string) error)
+	// relaytokenDescDecimals is the schema descriptor for decimals field.
+	relaytokenDescDecimals := relaytokenFields[6].Descriptor()
+	// relaytoken.DecimalsValidator is a validator for the "decimals" field. It is called by the builders before save.
+	relaytoken.DecimalsValidator = relaytokenDescDecimals.Validators[0].(func(int) error)
+	// relaytokenDescNative is the schema descriptor for native field.
+	relaytokenDescNative := relaytokenFields[7].Descriptor()
+	// relaytoken.DefaultNative holds the default value on creation for the native field.
+	relaytoken.DefaultNative = relaytokenDescNative.Default.(bool)
+	// relaytokenDescStablecoin is the schema descriptor for stablecoin field.
+	relaytokenDescStablecoin := relaytokenFields[8].Descriptor()
+	// relaytoken.DefaultStablecoin holds the default value on creation for the stablecoin field.
+	relaytoken.DefaultStablecoin = relaytokenDescStablecoin.Default.(bool)
+	// relaytokenDescSupportsBridging is the schema descriptor for supports_bridging field.
+	relaytokenDescSupportsBridging := relaytokenFields[9].Descriptor()
+	// relaytoken.DefaultSupportsBridging holds the default value on creation for the supports_bridging field.
+	relaytoken.DefaultSupportsBridging = relaytokenDescSupportsBridging.Default.(bool)
+	// relaytokenDescSupportsPermit is the schema descriptor for supports_permit field.
+	relaytokenDescSupportsPermit := relaytokenFields[10].Descriptor()
+	// relaytoken.DefaultSupportsPermit holds the default value on creation for the supports_permit field.
+	relaytoken.DefaultSupportsPermit = relaytokenDescSupportsPermit.Default.(bool)
+	// relaytokenDescIsFeatured is the schema descriptor for is_featured field.
+	relaytokenDescIsFeatured := relaytokenFields[11].Descriptor()
+	// relaytoken.DefaultIsFeatured holds the default value on creation for the is_featured field.
+	relaytoken.DefaultIsFeatured = relaytokenDescIsFeatured.Default.(bool)
+	// relaytokenDescIsSolver is the schema descriptor for is_solver field.
+	relaytokenDescIsSolver := relaytokenFields[12].Descriptor()
+	// relaytoken.DefaultIsSolver holds the default value on creation for the is_solver field.
+	relaytoken.DefaultIsSolver = relaytokenDescIsSolver.Default.(bool)
+	// relaytokenDescIsErc20 is the schema descriptor for is_erc20 field.
+	relaytokenDescIsErc20 := relaytokenFields[13].Descriptor()
+	// relaytoken.DefaultIsErc20 holds the default value on creation for the is_erc20 field.
+	relaytoken.DefaultIsErc20 = relaytokenDescIsErc20.Default.(bool)
+	// relaytokenDescSupported is the schema descriptor for supported field.
+	relaytokenDescSupported := relaytokenFields[14].Descriptor()
+	// relaytoken.DefaultSupported holds the default value on creation for the supported field.
+	relaytoken.DefaultSupported = relaytokenDescSupported.Default.(bool)
+	// relaytokenDescCreatedAt is the schema descriptor for created_at field.
+	relaytokenDescCreatedAt := relaytokenFields[16].Descriptor()
+	// relaytoken.DefaultCreatedAt holds the default value on creation for the created_at field.
+	relaytoken.DefaultCreatedAt = relaytokenDescCreatedAt.Default.(func() time.Time)
+	// relaytokenDescUpdatedAt is the schema descriptor for updated_at field.
+	relaytokenDescUpdatedAt := relaytokenFields[17].Descriptor()
+	// relaytoken.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	relaytoken.DefaultUpdatedAt = relaytokenDescUpdatedAt.Default.(func() time.Time)
+	// relaytoken.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	relaytoken.UpdateDefaultUpdatedAt = relaytokenDescUpdatedAt.UpdateDefault.(func() time.Time)
 	taskMixin := schema.Task{}.Mixin()
 	taskMixinFields0 := taskMixin[0].Fields()
 	_ = taskMixinFields0
