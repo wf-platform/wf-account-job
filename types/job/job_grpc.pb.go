@@ -35,6 +35,8 @@ const (
 	Job_GetRelayChainById_FullMethodName         = "/job.Job/getRelayChainById"
 	Job_GetRelayTokenList_FullMethodName         = "/job.Job/getRelayTokenList"
 	Job_GetRelayTokenByChainAndId_FullMethodName = "/job.Job/getRelayTokenByChainAndId"
+	Job_GetClientRelayChainList_FullMethodName   = "/job.Job/getClientRelayChainList"
+	Job_GetClientRelayTokenList_FullMethodName   = "/job.Job/getClientRelayTokenList"
 )
 
 // JobClient is the client API for Job service.
@@ -77,6 +79,12 @@ type JobClient interface {
 	GetRelayTokenList(ctx context.Context, in *RelayTokenListReq, opts ...grpc.CallOption) (*RelayTokenListResp, error)
 	// group: relay
 	GetRelayTokenByChainAndId(ctx context.Context, in *RelayTokenKeyReq, opts ...grpc.CallOption) (*RelayTokenInfo, error)
+	// Client RelayChain query
+	// group: relay
+	GetClientRelayChainList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ClientRelayChainListResp, error)
+	// Client RelayToken query
+	// group: relay
+	GetClientRelayTokenList(ctx context.Context, in *ClientRelayTokenListReq, opts ...grpc.CallOption) (*ClientRelayTokenListResp, error)
 }
 
 type jobClient struct {
@@ -247,6 +255,26 @@ func (c *jobClient) GetRelayTokenByChainAndId(ctx context.Context, in *RelayToke
 	return out, nil
 }
 
+func (c *jobClient) GetClientRelayChainList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ClientRelayChainListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ClientRelayChainListResp)
+	err := c.cc.Invoke(ctx, Job_GetClientRelayChainList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobClient) GetClientRelayTokenList(ctx context.Context, in *ClientRelayTokenListReq, opts ...grpc.CallOption) (*ClientRelayTokenListResp, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ClientRelayTokenListResp)
+	err := c.cc.Invoke(ctx, Job_GetClientRelayTokenList_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JobServer is the server API for Job service.
 // All implementations must embed UnimplementedJobServer
 // for forward compatibility.
@@ -287,6 +315,12 @@ type JobServer interface {
 	GetRelayTokenList(context.Context, *RelayTokenListReq) (*RelayTokenListResp, error)
 	// group: relay
 	GetRelayTokenByChainAndId(context.Context, *RelayTokenKeyReq) (*RelayTokenInfo, error)
+	// Client RelayChain query
+	// group: relay
+	GetClientRelayChainList(context.Context, *Empty) (*ClientRelayChainListResp, error)
+	// Client RelayToken query
+	// group: relay
+	GetClientRelayTokenList(context.Context, *ClientRelayTokenListReq) (*ClientRelayTokenListResp, error)
 	mustEmbedUnimplementedJobServer()
 }
 
@@ -344,6 +378,12 @@ func (UnimplementedJobServer) GetRelayTokenList(context.Context, *RelayTokenList
 }
 func (UnimplementedJobServer) GetRelayTokenByChainAndId(context.Context, *RelayTokenKeyReq) (*RelayTokenInfo, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetRelayTokenByChainAndId not implemented")
+}
+func (UnimplementedJobServer) GetClientRelayChainList(context.Context, *Empty) (*ClientRelayChainListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetClientRelayChainList not implemented")
+}
+func (UnimplementedJobServer) GetClientRelayTokenList(context.Context, *ClientRelayTokenListReq) (*ClientRelayTokenListResp, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetClientRelayTokenList not implemented")
 }
 func (UnimplementedJobServer) mustEmbedUnimplementedJobServer() {}
 func (UnimplementedJobServer) testEmbeddedByValue()             {}
@@ -654,6 +694,42 @@ func _Job_GetRelayTokenByChainAndId_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Job_GetClientRelayChainList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobServer).GetClientRelayChainList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Job_GetClientRelayChainList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobServer).GetClientRelayChainList(ctx, req.(*Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Job_GetClientRelayTokenList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClientRelayTokenListReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobServer).GetClientRelayTokenList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Job_GetClientRelayTokenList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobServer).GetClientRelayTokenList(ctx, req.(*ClientRelayTokenListReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Job_ServiceDesc is the grpc.ServiceDesc for Job service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -724,6 +800,14 @@ var Job_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "getRelayTokenByChainAndId",
 			Handler:    _Job_GetRelayTokenByChainAndId_Handler,
+		},
+		{
+			MethodName: "getClientRelayChainList",
+			Handler:    _Job_GetClientRelayChainList_Handler,
+		},
+		{
+			MethodName: "getClientRelayTokenList",
+			Handler:    _Job_GetClientRelayTokenList_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

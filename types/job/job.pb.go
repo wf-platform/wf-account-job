@@ -23,8 +23,8 @@ const (
 
 type BaseIDResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -75,7 +75,7 @@ func (x *BaseIDResp) GetMsg() string {
 
 type BaseResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Msg           string                 `protobuf:"bytes,1,opt,name=msg,proto3" json:"msg,omitempty"`
+	Msg           string                 `protobuf:"bytes,1,opt,name=msg,proto3" json:"msg"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -119,8 +119,8 @@ func (x *BaseResp) GetMsg() string {
 
 type BaseUUIDResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	Msg           string                 `protobuf:"bytes,2,opt,name=msg,proto3" json:"msg"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -208,7 +208,7 @@ func (*Empty) Descriptor() ([]byte, []int) {
 
 type IDReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -252,7 +252,7 @@ func (x *IDReq) GetId() uint64 {
 
 type IDsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ids           []uint64               `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	Ids           []uint64               `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -296,8 +296,8 @@ func (x *IDsReq) GetIds() []uint64 {
 
 type PageInfoReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
+	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page"`
+	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -348,15 +348,15 @@ func (x *PageInfoReq) GetPageSize() uint64 {
 
 type TaskInfo struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
-	CreatedAt      *int64                 `protobuf:"varint,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt      *int64                 `protobuf:"varint,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Status         *uint32                `protobuf:"varint,4,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	Name           *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	TaskGroup      *string                `protobuf:"bytes,6,opt,name=task_group,json=taskGroup,proto3,oneof" json:"task_group,omitempty"`
-	CronExpression *string                `protobuf:"bytes,7,opt,name=cron_expression,json=cronExpression,proto3,oneof" json:"cron_expression,omitempty"`
-	Pattern        *string                `protobuf:"bytes,8,opt,name=pattern,proto3,oneof" json:"pattern,omitempty"`
-	Payload        *string                `protobuf:"bytes,9,opt,name=payload,proto3,oneof" json:"payload,omitempty"`
+	Id             *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id"`
+	CreatedAt      *int64                 `protobuf:"varint,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at"`
+	UpdatedAt      *int64                 `protobuf:"varint,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at"`
+	Status         *uint32                `protobuf:"varint,4,opt,name=status,proto3,oneof" json:"status"`
+	Name           *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name"`
+	TaskGroup      *string                `protobuf:"bytes,6,opt,name=task_group,json=taskGroup,proto3,oneof" json:"task_group"`
+	CronExpression *string                `protobuf:"bytes,7,opt,name=cron_expression,json=cronExpression,proto3,oneof" json:"cron_expression"`
+	Pattern        *string                `protobuf:"bytes,8,opt,name=pattern,proto3,oneof" json:"pattern"`
+	Payload        *string                `protobuf:"bytes,9,opt,name=payload,proto3,oneof" json:"payload"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -456,10 +456,10 @@ func (x *TaskInfo) GetPayload() string {
 
 type TaskListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	TaskGroup     *string                `protobuf:"bytes,4,opt,name=task_group,json=taskGroup,proto3,oneof" json:"task_group,omitempty"`
+	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page"`
+	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size"`
+	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name"`
+	TaskGroup     *string                `protobuf:"bytes,4,opt,name=task_group,json=taskGroup,proto3,oneof" json:"task_group"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -524,8 +524,8 @@ func (x *TaskListReq) GetTaskGroup() string {
 
 type TaskListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
-	Data          []*TaskInfo            `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total"`
+	Data          []*TaskInfo            `protobuf:"bytes,2,rep,name=data,proto3" json:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -576,12 +576,12 @@ func (x *TaskListResp) GetData() []*TaskInfo {
 
 type TaskLogInfo struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
-	CreatedAt     *int64                 `protobuf:"varint,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt     *int64                 `protobuf:"varint,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	StartedAt     *int64                 `protobuf:"varint,4,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at,omitempty"`
-	FinishedAt    *int64                 `protobuf:"varint,5,opt,name=finished_at,json=finishedAt,proto3,oneof" json:"finished_at,omitempty"`
-	Result        *uint32                `protobuf:"varint,6,opt,name=result,proto3,oneof" json:"result,omitempty"`
+	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id"`
+	CreatedAt     *int64                 `protobuf:"varint,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at"`
+	UpdatedAt     *int64                 `protobuf:"varint,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at"`
+	StartedAt     *int64                 `protobuf:"varint,4,opt,name=started_at,json=startedAt,proto3,oneof" json:"started_at"`
+	FinishedAt    *int64                 `protobuf:"varint,5,opt,name=finished_at,json=finishedAt,proto3,oneof" json:"finished_at"`
+	Result        *uint32                `protobuf:"varint,6,opt,name=result,proto3,oneof" json:"result"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -660,10 +660,10 @@ func (x *TaskLogInfo) GetResult() uint32 {
 
 type TaskLogListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	TaskId        *uint64                `protobuf:"varint,3,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id,omitempty"`
-	Result        *uint32                `protobuf:"varint,4,opt,name=result,proto3,oneof" json:"result,omitempty"`
+	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page"`
+	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size"`
+	TaskId        *uint64                `protobuf:"varint,3,opt,name=task_id,json=taskId,proto3,oneof" json:"task_id"`
+	Result        *uint32                `protobuf:"varint,4,opt,name=result,proto3,oneof" json:"result"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -728,8 +728,8 @@ func (x *TaskLogListReq) GetResult() uint32 {
 
 type TaskLogListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
-	Data          []*TaskLogInfo         `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total"`
+	Data          []*TaskLogInfo         `protobuf:"bytes,2,rep,name=data,proto3" json:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -780,7 +780,7 @@ func (x *TaskLogListResp) GetData() []*TaskLogInfo {
 
 type UUIDReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -824,7 +824,7 @@ func (x *UUIDReq) GetId() string {
 
 type UUIDsReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Ids           []string               `protobuf:"bytes,1,rep,name=ids,proto3" json:"ids,omitempty"`
+	Ids           []string               `protobuf:"bytes,1,rep,name=ids,proto3" json:"ids"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -868,7 +868,7 @@ func (x *UUIDsReq) GetIds() []string {
 
 type RelayChainIDReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -912,8 +912,8 @@ func (x *RelayChainIDReq) GetId() int64 {
 
 type RelayTokenKeyReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	ChainId       int64                  `protobuf:"varint,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
-	Id            string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id,omitempty"`
+	ChainId       int64                  `protobuf:"varint,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id"`
+	Id            string                 `protobuf:"bytes,2,opt,name=id,proto3" json:"id"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -964,28 +964,28 @@ func (x *RelayTokenKeyReq) GetId() string {
 
 type RelayChainInfo struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
-	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	CreatedAt      *int64                 `protobuf:"varint,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt      *int64                 `protobuf:"varint,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Slug           *string                `protobuf:"bytes,4,opt,name=slug,proto3,oneof" json:"slug,omitempty"`
-	Name           *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	LogoUrl        *string                `protobuf:"bytes,6,opt,name=logo_url,json=logoUrl,proto3,oneof" json:"logo_url,omitempty"`
-	Type           *string                `protobuf:"bytes,7,opt,name=type,proto3,oneof" json:"type,omitempty"`
-	VmType         *string                `protobuf:"bytes,8,opt,name=vm_type,json=vmType,proto3,oneof" json:"vm_type,omitempty"`
-	Protocol       *string                `protobuf:"bytes,9,opt,name=protocol,proto3,oneof" json:"protocol,omitempty"`
-	BaseChainId    *string                `protobuf:"bytes,10,opt,name=base_chain_id,json=baseChainId,proto3,oneof" json:"base_chain_id,omitempty"`
-	ExplorerUrl    *string                `protobuf:"bytes,11,opt,name=explorer_url,json=explorerUrl,proto3,oneof" json:"explorer_url,omitempty"`
-	ExplorerName   *string                `protobuf:"bytes,12,opt,name=explorer_name,json=explorerName,proto3,oneof" json:"explorer_name,omitempty"`
-	RpcUrl         *string                `protobuf:"bytes,13,opt,name=rpc_url,json=rpcUrl,proto3,oneof" json:"rpc_url,omitempty"`
-	WsRpcUrl       *string                `protobuf:"bytes,14,opt,name=ws_rpc_url,json=wsRpcUrl,proto3,oneof" json:"ws_rpc_url,omitempty"`
-	NativeSymbol   *string                `protobuf:"bytes,15,opt,name=native_symbol,json=nativeSymbol,proto3,oneof" json:"native_symbol,omitempty"`
-	NativeDecimals *int64                 `protobuf:"varint,16,opt,name=native_decimals,json=nativeDecimals,proto3,oneof" json:"native_decimals,omitempty"`
-	DepositEnabled *bool                  `protobuf:"varint,17,opt,name=deposit_enabled,json=depositEnabled,proto3,oneof" json:"deposit_enabled,omitempty"`
-	TokenSupport   *string                `protobuf:"bytes,18,opt,name=token_support,json=tokenSupport,proto3,oneof" json:"token_support,omitempty"`
-	Disabled       *bool                  `protobuf:"varint,19,opt,name=disabled,proto3,oneof" json:"disabled,omitempty"`
-	Supported      *bool                  `protobuf:"varint,20,opt,name=supported,proto3,oneof" json:"supported,omitempty"`
-	Enabled        *bool                  `protobuf:"varint,21,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`
-	RawData        *string                `protobuf:"bytes,22,opt,name=raw_data,json=rawData,proto3,oneof" json:"raw_data,omitempty"`
+	Id             int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	CreatedAt      *int64                 `protobuf:"varint,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at"`
+	UpdatedAt      *int64                 `protobuf:"varint,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at"`
+	Slug           *string                `protobuf:"bytes,4,opt,name=slug,proto3,oneof" json:"slug"`
+	Name           *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name"`
+	LogoUrl        *string                `protobuf:"bytes,6,opt,name=logo_url,json=logoUrl,proto3,oneof" json:"logo_url"`
+	Type           *string                `protobuf:"bytes,7,opt,name=type,proto3,oneof" json:"type"`
+	VmType         *string                `protobuf:"bytes,8,opt,name=vm_type,json=vmType,proto3,oneof" json:"vm_type"`
+	Protocol       *string                `protobuf:"bytes,9,opt,name=protocol,proto3,oneof" json:"protocol"`
+	BaseChainId    *string                `protobuf:"bytes,10,opt,name=base_chain_id,json=baseChainId,proto3,oneof" json:"base_chain_id"`
+	ExplorerUrl    *string                `protobuf:"bytes,11,opt,name=explorer_url,json=explorerUrl,proto3,oneof" json:"explorer_url"`
+	ExplorerName   *string                `protobuf:"bytes,12,opt,name=explorer_name,json=explorerName,proto3,oneof" json:"explorer_name"`
+	RpcUrl         *string                `protobuf:"bytes,13,opt,name=rpc_url,json=rpcUrl,proto3,oneof" json:"rpc_url"`
+	WsRpcUrl       *string                `protobuf:"bytes,14,opt,name=ws_rpc_url,json=wsRpcUrl,proto3,oneof" json:"ws_rpc_url"`
+	NativeSymbol   *string                `protobuf:"bytes,15,opt,name=native_symbol,json=nativeSymbol,proto3,oneof" json:"native_symbol"`
+	NativeDecimals *int64                 `protobuf:"varint,16,opt,name=native_decimals,json=nativeDecimals,proto3,oneof" json:"native_decimals"`
+	DepositEnabled *bool                  `protobuf:"varint,17,opt,name=deposit_enabled,json=depositEnabled,proto3,oneof" json:"deposit_enabled"`
+	TokenSupport   *string                `protobuf:"bytes,18,opt,name=token_support,json=tokenSupport,proto3,oneof" json:"token_support"`
+	Disabled       *bool                  `protobuf:"varint,19,opt,name=disabled,proto3,oneof" json:"disabled"`
+	Supported      *bool                  `protobuf:"varint,20,opt,name=supported,proto3,oneof" json:"supported"`
+	Enabled        *bool                  `protobuf:"varint,21,opt,name=enabled,proto3,oneof" json:"enabled"`
+	RawData        *string                `protobuf:"bytes,22,opt,name=raw_data,json=rawData,proto3,oneof" json:"raw_data"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1176,13 +1176,13 @@ func (x *RelayChainInfo) GetRawData() string {
 
 type RelayChainListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	Ids           []int64                `protobuf:"varint,3,rep,packed,name=ids,proto3" json:"ids,omitempty"`
-	Name          *string                `protobuf:"bytes,4,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	Type          *string                `protobuf:"bytes,5,opt,name=type,proto3,oneof" json:"type,omitempty"`
-	Enabled       *bool                  `protobuf:"varint,6,opt,name=enabled,proto3,oneof" json:"enabled,omitempty"`
-	Supported     *bool                  `protobuf:"varint,7,opt,name=supported,proto3,oneof" json:"supported,omitempty"`
+	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page"`
+	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size"`
+	Ids           []int64                `protobuf:"varint,3,rep,packed,name=ids,proto3" json:"ids"`
+	Name          *string                `protobuf:"bytes,4,opt,name=name,proto3,oneof" json:"name"`
+	Type          *string                `protobuf:"bytes,5,opt,name=type,proto3,oneof" json:"type"`
+	Enabled       *bool                  `protobuf:"varint,6,opt,name=enabled,proto3,oneof" json:"enabled"`
+	Supported     *bool                  `protobuf:"varint,7,opt,name=supported,proto3,oneof" json:"supported"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1268,8 +1268,8 @@ func (x *RelayChainListReq) GetSupported() bool {
 
 type RelayChainListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
-	Data          []*RelayChainInfo      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total"`
+	Data          []*RelayChainInfo      `protobuf:"bytes,2,rep,name=data,proto3" json:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1320,24 +1320,24 @@ func (x *RelayChainListResp) GetData() []*RelayChainInfo {
 
 type RelayTokenInfo struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
-	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	ChainId          int64                  `protobuf:"varint,2,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
-	CreatedAt        *int64                 `protobuf:"varint,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt        *int64                 `protobuf:"varint,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Address          *string                `protobuf:"bytes,5,opt,name=address,proto3,oneof" json:"address,omitempty"`
-	Name             *string                `protobuf:"bytes,6,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	Symbol           *string                `protobuf:"bytes,7,opt,name=symbol,proto3,oneof" json:"symbol,omitempty"`
-	LogoUrl          *string                `protobuf:"bytes,8,opt,name=logo_url,json=logoUrl,proto3,oneof" json:"logo_url,omitempty"`
-	Decimals         *int64                 `protobuf:"varint,9,opt,name=decimals,proto3,oneof" json:"decimals,omitempty"`
-	Native           *bool                  `protobuf:"varint,10,opt,name=native,proto3,oneof" json:"native,omitempty"`
-	Stablecoin       *bool                  `protobuf:"varint,11,opt,name=stablecoin,proto3,oneof" json:"stablecoin,omitempty"`
-	SupportsBridging *bool                  `protobuf:"varint,12,opt,name=supports_bridging,json=supportsBridging,proto3,oneof" json:"supports_bridging,omitempty"`
-	SupportsPermit   *bool                  `protobuf:"varint,13,opt,name=supports_permit,json=supportsPermit,proto3,oneof" json:"supports_permit,omitempty"`
-	IsFeatured       *bool                  `protobuf:"varint,14,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured,omitempty"`
-	IsSolver         *bool                  `protobuf:"varint,15,opt,name=is_solver,json=isSolver,proto3,oneof" json:"is_solver,omitempty"`
-	IsErc20          *bool                  `protobuf:"varint,16,opt,name=is_erc20,json=isErc20,proto3,oneof" json:"is_erc20,omitempty"`
-	Supported        *bool                  `protobuf:"varint,17,opt,name=supported,proto3,oneof" json:"supported,omitempty"`
-	RawData          *string                `protobuf:"bytes,18,opt,name=raw_data,json=rawData,proto3,oneof" json:"raw_data,omitempty"`
+	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	ChainId          int64                  `protobuf:"varint,2,opt,name=chain_id,json=chainId,proto3" json:"chain_id"`
+	CreatedAt        *int64                 `protobuf:"varint,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at"`
+	UpdatedAt        *int64                 `protobuf:"varint,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at"`
+	Address          *string                `protobuf:"bytes,5,opt,name=address,proto3,oneof" json:"address"`
+	Name             *string                `protobuf:"bytes,6,opt,name=name,proto3,oneof" json:"name"`
+	Symbol           *string                `protobuf:"bytes,7,opt,name=symbol,proto3,oneof" json:"symbol"`
+	LogoUrl          *string                `protobuf:"bytes,8,opt,name=logo_url,json=logoUrl,proto3,oneof" json:"logo_url"`
+	Decimals         *int64                 `protobuf:"varint,9,opt,name=decimals,proto3,oneof" json:"decimals"`
+	Native           *bool                  `protobuf:"varint,10,opt,name=native,proto3,oneof" json:"native"`
+	Stablecoin       *bool                  `protobuf:"varint,11,opt,name=stablecoin,proto3,oneof" json:"stablecoin"`
+	SupportsBridging *bool                  `protobuf:"varint,12,opt,name=supports_bridging,json=supportsBridging,proto3,oneof" json:"supports_bridging"`
+	SupportsPermit   *bool                  `protobuf:"varint,13,opt,name=supports_permit,json=supportsPermit,proto3,oneof" json:"supports_permit"`
+	IsFeatured       *bool                  `protobuf:"varint,14,opt,name=is_featured,json=isFeatured,proto3,oneof" json:"is_featured"`
+	IsSolver         *bool                  `protobuf:"varint,15,opt,name=is_solver,json=isSolver,proto3,oneof" json:"is_solver"`
+	IsErc20          *bool                  `protobuf:"varint,16,opt,name=is_erc20,json=isErc20,proto3,oneof" json:"is_erc20"`
+	Supported        *bool                  `protobuf:"varint,17,opt,name=supported,proto3,oneof" json:"supported"`
+	RawData          *string                `protobuf:"bytes,18,opt,name=raw_data,json=rawData,proto3,oneof" json:"raw_data"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -1500,14 +1500,14 @@ func (x *RelayTokenInfo) GetRawData() string {
 
 type RelayTokenListReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page,omitempty"`
-	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty"`
-	ChainIds      []int64                `protobuf:"varint,3,rep,packed,name=chain_ids,json=chainIds,proto3" json:"chain_ids,omitempty"`
-	Ids           []string               `protobuf:"bytes,4,rep,name=ids,proto3" json:"ids,omitempty"`
-	Name          *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	Symbol        *string                `protobuf:"bytes,6,opt,name=symbol,proto3,oneof" json:"symbol,omitempty"`
-	Address       *string                `protobuf:"bytes,7,opt,name=address,proto3,oneof" json:"address,omitempty"`
-	Supported     *bool                  `protobuf:"varint,8,opt,name=supported,proto3,oneof" json:"supported,omitempty"`
+	Page          uint64                 `protobuf:"varint,1,opt,name=page,proto3" json:"page"`
+	PageSize      uint64                 `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size"`
+	ChainIds      []int64                `protobuf:"varint,3,rep,packed,name=chain_ids,json=chainIds,proto3" json:"chain_ids"`
+	Ids           []string               `protobuf:"bytes,4,rep,name=ids,proto3" json:"ids"`
+	Name          *string                `protobuf:"bytes,5,opt,name=name,proto3,oneof" json:"name"`
+	Symbol        *string                `protobuf:"bytes,6,opt,name=symbol,proto3,oneof" json:"symbol"`
+	Address       *string                `protobuf:"bytes,7,opt,name=address,proto3,oneof" json:"address"`
+	Supported     *bool                  `protobuf:"varint,8,opt,name=supported,proto3,oneof" json:"supported"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1600,8 +1600,8 @@ func (x *RelayTokenListReq) GetSupported() bool {
 
 type RelayTokenListResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
-	Data          []*RelayTokenInfo      `protobuf:"bytes,2,rep,name=data,proto3" json:"data,omitempty"`
+	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total"`
+	Data          []*RelayTokenInfo      `protobuf:"bytes,2,rep,name=data,proto3" json:"data"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1644,6 +1644,298 @@ func (x *RelayTokenListResp) GetTotal() uint64 {
 }
 
 func (x *RelayTokenListResp) GetData() []*RelayTokenInfo {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ClientRelayChainInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name"`
+	LogoUrl       string                 `protobuf:"bytes,3,opt,name=logo_url,json=logoUrl,proto3" json:"logo_url"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientRelayChainInfo) Reset() {
+	*x = ClientRelayChainInfo{}
+	mi := &file_job_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientRelayChainInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientRelayChainInfo) ProtoMessage() {}
+
+func (x *ClientRelayChainInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_job_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientRelayChainInfo.ProtoReflect.Descriptor instead.
+func (*ClientRelayChainInfo) Descriptor() ([]byte, []int) {
+	return file_job_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ClientRelayChainInfo) GetId() int64 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *ClientRelayChainInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ClientRelayChainInfo) GetLogoUrl() string {
+	if x != nil {
+		return x.LogoUrl
+	}
+	return ""
+}
+
+type ClientRelayChainListResp struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Data          []*ClientRelayChainInfo `protobuf:"bytes,1,rep,name=data,proto3" json:"data"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientRelayChainListResp) Reset() {
+	*x = ClientRelayChainListResp{}
+	mi := &file_job_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientRelayChainListResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientRelayChainListResp) ProtoMessage() {}
+
+func (x *ClientRelayChainListResp) ProtoReflect() protoreflect.Message {
+	mi := &file_job_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientRelayChainListResp.ProtoReflect.Descriptor instead.
+func (*ClientRelayChainListResp) Descriptor() ([]byte, []int) {
+	return file_job_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ClientRelayChainListResp) GetData() []*ClientRelayChainInfo {
+	if x != nil {
+		return x.Data
+	}
+	return nil
+}
+
+type ClientRelayTokenListReq struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ChainId       int64                  `protobuf:"varint,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id"`
+	Ids           []string               `protobuf:"bytes,2,rep,name=ids,proto3" json:"ids"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientRelayTokenListReq) Reset() {
+	*x = ClientRelayTokenListReq{}
+	mi := &file_job_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientRelayTokenListReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientRelayTokenListReq) ProtoMessage() {}
+
+func (x *ClientRelayTokenListReq) ProtoReflect() protoreflect.Message {
+	mi := &file_job_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientRelayTokenListReq.ProtoReflect.Descriptor instead.
+func (*ClientRelayTokenListReq) Descriptor() ([]byte, []int) {
+	return file_job_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *ClientRelayTokenListReq) GetChainId() int64 {
+	if x != nil {
+		return x.ChainId
+	}
+	return 0
+}
+
+func (x *ClientRelayTokenListReq) GetIds() []string {
+	if x != nil {
+		return x.Ids
+	}
+	return nil
+}
+
+type ClientRelayTokenInfo struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id"`
+	ChainId       int64                  `protobuf:"varint,2,opt,name=chain_id,json=chainId,proto3" json:"chain_id"`
+	Name          string                 `protobuf:"bytes,3,opt,name=name,proto3" json:"name"`
+	Symbol        string                 `protobuf:"bytes,4,opt,name=symbol,proto3" json:"symbol"`
+	LogoUrl       string                 `protobuf:"bytes,5,opt,name=logo_url,json=logoUrl,proto3" json:"logo_url"`
+	Address       string                 `protobuf:"bytes,6,opt,name=address,proto3" json:"address"`
+	Decimals      int64                  `protobuf:"varint,7,opt,name=decimals,proto3" json:"decimals"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientRelayTokenInfo) Reset() {
+	*x = ClientRelayTokenInfo{}
+	mi := &file_job_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientRelayTokenInfo) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientRelayTokenInfo) ProtoMessage() {}
+
+func (x *ClientRelayTokenInfo) ProtoReflect() protoreflect.Message {
+	mi := &file_job_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientRelayTokenInfo.ProtoReflect.Descriptor instead.
+func (*ClientRelayTokenInfo) Descriptor() ([]byte, []int) {
+	return file_job_proto_rawDescGZIP(), []int{26}
+}
+
+func (x *ClientRelayTokenInfo) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *ClientRelayTokenInfo) GetChainId() int64 {
+	if x != nil {
+		return x.ChainId
+	}
+	return 0
+}
+
+func (x *ClientRelayTokenInfo) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ClientRelayTokenInfo) GetSymbol() string {
+	if x != nil {
+		return x.Symbol
+	}
+	return ""
+}
+
+func (x *ClientRelayTokenInfo) GetLogoUrl() string {
+	if x != nil {
+		return x.LogoUrl
+	}
+	return ""
+}
+
+func (x *ClientRelayTokenInfo) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *ClientRelayTokenInfo) GetDecimals() int64 {
+	if x != nil {
+		return x.Decimals
+	}
+	return 0
+}
+
+type ClientRelayTokenListResp struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Data          []*ClientRelayTokenInfo `protobuf:"bytes,1,rep,name=data,proto3" json:"data"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClientRelayTokenListResp) Reset() {
+	*x = ClientRelayTokenListResp{}
+	mi := &file_job_proto_msgTypes[27]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClientRelayTokenListResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClientRelayTokenListResp) ProtoMessage() {}
+
+func (x *ClientRelayTokenListResp) ProtoReflect() protoreflect.Message {
+	mi := &file_job_proto_msgTypes[27]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClientRelayTokenListResp.ProtoReflect.Descriptor instead.
+func (*ClientRelayTokenListResp) Descriptor() ([]byte, []int) {
+	return file_job_proto_rawDescGZIP(), []int{27}
+}
+
+func (x *ClientRelayTokenListResp) GetData() []*ClientRelayTokenInfo {
 	if x != nil {
 		return x.Data
 	}
@@ -1876,7 +2168,26 @@ const file_job_proto_rawDesc = "" +
 	"_supported\"S\n" +
 	"\x12RelayTokenListResp\x12\x14\n" +
 	"\x05total\x18\x01 \x01(\x04R\x05total\x12'\n" +
-	"\x04data\x18\x02 \x03(\v2\x13.job.RelayTokenInfoR\x04data2\xd5\x06\n" +
+	"\x04data\x18\x02 \x03(\v2\x13.job.RelayTokenInfoR\x04data\"U\n" +
+	"\x14ClientRelayChainInfo\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x19\n" +
+	"\blogo_url\x18\x03 \x01(\tR\alogoUrl\"I\n" +
+	"\x18ClientRelayChainListResp\x12-\n" +
+	"\x04data\x18\x01 \x03(\v2\x19.job.ClientRelayChainInfoR\x04data\"F\n" +
+	"\x17ClientRelayTokenListReq\x12\x19\n" +
+	"\bchain_id\x18\x01 \x01(\x03R\achainId\x12\x10\n" +
+	"\x03ids\x18\x02 \x03(\tR\x03ids\"\xbe\x01\n" +
+	"\x14ClientRelayTokenInfo\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x19\n" +
+	"\bchain_id\x18\x02 \x01(\x03R\achainId\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x16\n" +
+	"\x06symbol\x18\x04 \x01(\tR\x06symbol\x12\x19\n" +
+	"\blogo_url\x18\x05 \x01(\tR\alogoUrl\x12\x18\n" +
+	"\aaddress\x18\x06 \x01(\tR\aaddress\x12\x1a\n" +
+	"\bdecimals\x18\a \x01(\x03R\bdecimals\"I\n" +
+	"\x18ClientRelayTokenListResp\x12-\n" +
+	"\x04data\x18\x01 \x03(\v2\x19.job.ClientRelayTokenInfoR\x04data2\xf3\a\n" +
 	"\x03Job\x12)\n" +
 	"\finitDatabase\x12\n" +
 	".job.Empty\x1a\r.job.BaseResp\x12,\n" +
@@ -1900,7 +2211,10 @@ const file_job_proto_rawDesc = "" +
 	"\x11getRelayChainList\x12\x16.job.RelayChainListReq\x1a\x17.job.RelayChainListResp\x12>\n" +
 	"\x11getRelayChainById\x12\x14.job.RelayChainIDReq\x1a\x13.job.RelayChainInfo\x12D\n" +
 	"\x11getRelayTokenList\x12\x16.job.RelayTokenListReq\x1a\x17.job.RelayTokenListResp\x12G\n" +
-	"\x19getRelayTokenByChainAndId\x12\x15.job.RelayTokenKeyReq\x1a\x13.job.RelayTokenInfoB\aZ\x05./jobb\x06proto3"
+	"\x19getRelayTokenByChainAndId\x12\x15.job.RelayTokenKeyReq\x1a\x13.job.RelayTokenInfo\x12D\n" +
+	"\x17getClientRelayChainList\x12\n" +
+	".job.Empty\x1a\x1d.job.ClientRelayChainListResp\x12V\n" +
+	"\x17getClientRelayTokenList\x12\x1c.job.ClientRelayTokenListReq\x1a\x1d.job.ClientRelayTokenListRespB\aZ\x05./jobb\x06proto3"
 
 var (
 	file_job_proto_rawDescOnce sync.Once
@@ -1914,74 +2228,85 @@ func file_job_proto_rawDescGZIP() []byte {
 	return file_job_proto_rawDescData
 }
 
-var file_job_proto_msgTypes = make([]protoimpl.MessageInfo, 23)
+var file_job_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_job_proto_goTypes = []any{
-	(*BaseIDResp)(nil),         // 0: job.BaseIDResp
-	(*BaseResp)(nil),           // 1: job.BaseResp
-	(*BaseUUIDResp)(nil),       // 2: job.BaseUUIDResp
-	(*Empty)(nil),              // 3: job.Empty
-	(*IDReq)(nil),              // 4: job.IDReq
-	(*IDsReq)(nil),             // 5: job.IDsReq
-	(*PageInfoReq)(nil),        // 6: job.PageInfoReq
-	(*TaskInfo)(nil),           // 7: job.TaskInfo
-	(*TaskListReq)(nil),        // 8: job.TaskListReq
-	(*TaskListResp)(nil),       // 9: job.TaskListResp
-	(*TaskLogInfo)(nil),        // 10: job.TaskLogInfo
-	(*TaskLogListReq)(nil),     // 11: job.TaskLogListReq
-	(*TaskLogListResp)(nil),    // 12: job.TaskLogListResp
-	(*UUIDReq)(nil),            // 13: job.UUIDReq
-	(*UUIDsReq)(nil),           // 14: job.UUIDsReq
-	(*RelayChainIDReq)(nil),    // 15: job.RelayChainIDReq
-	(*RelayTokenKeyReq)(nil),   // 16: job.RelayTokenKeyReq
-	(*RelayChainInfo)(nil),     // 17: job.RelayChainInfo
-	(*RelayChainListReq)(nil),  // 18: job.RelayChainListReq
-	(*RelayChainListResp)(nil), // 19: job.RelayChainListResp
-	(*RelayTokenInfo)(nil),     // 20: job.RelayTokenInfo
-	(*RelayTokenListReq)(nil),  // 21: job.RelayTokenListReq
-	(*RelayTokenListResp)(nil), // 22: job.RelayTokenListResp
+	(*BaseIDResp)(nil),               // 0: job.BaseIDResp
+	(*BaseResp)(nil),                 // 1: job.BaseResp
+	(*BaseUUIDResp)(nil),             // 2: job.BaseUUIDResp
+	(*Empty)(nil),                    // 3: job.Empty
+	(*IDReq)(nil),                    // 4: job.IDReq
+	(*IDsReq)(nil),                   // 5: job.IDsReq
+	(*PageInfoReq)(nil),              // 6: job.PageInfoReq
+	(*TaskInfo)(nil),                 // 7: job.TaskInfo
+	(*TaskListReq)(nil),              // 8: job.TaskListReq
+	(*TaskListResp)(nil),             // 9: job.TaskListResp
+	(*TaskLogInfo)(nil),              // 10: job.TaskLogInfo
+	(*TaskLogListReq)(nil),           // 11: job.TaskLogListReq
+	(*TaskLogListResp)(nil),          // 12: job.TaskLogListResp
+	(*UUIDReq)(nil),                  // 13: job.UUIDReq
+	(*UUIDsReq)(nil),                 // 14: job.UUIDsReq
+	(*RelayChainIDReq)(nil),          // 15: job.RelayChainIDReq
+	(*RelayTokenKeyReq)(nil),         // 16: job.RelayTokenKeyReq
+	(*RelayChainInfo)(nil),           // 17: job.RelayChainInfo
+	(*RelayChainListReq)(nil),        // 18: job.RelayChainListReq
+	(*RelayChainListResp)(nil),       // 19: job.RelayChainListResp
+	(*RelayTokenInfo)(nil),           // 20: job.RelayTokenInfo
+	(*RelayTokenListReq)(nil),        // 21: job.RelayTokenListReq
+	(*RelayTokenListResp)(nil),       // 22: job.RelayTokenListResp
+	(*ClientRelayChainInfo)(nil),     // 23: job.ClientRelayChainInfo
+	(*ClientRelayChainListResp)(nil), // 24: job.ClientRelayChainListResp
+	(*ClientRelayTokenListReq)(nil),  // 25: job.ClientRelayTokenListReq
+	(*ClientRelayTokenInfo)(nil),     // 26: job.ClientRelayTokenInfo
+	(*ClientRelayTokenListResp)(nil), // 27: job.ClientRelayTokenListResp
 }
 var file_job_proto_depIdxs = []int32{
 	7,  // 0: job.TaskListResp.data:type_name -> job.TaskInfo
 	10, // 1: job.TaskLogListResp.data:type_name -> job.TaskLogInfo
 	17, // 2: job.RelayChainListResp.data:type_name -> job.RelayChainInfo
 	20, // 3: job.RelayTokenListResp.data:type_name -> job.RelayTokenInfo
-	3,  // 4: job.Job.initDatabase:input_type -> job.Empty
-	3,  // 5: job.Job.initRelayTables:input_type -> job.Empty
-	7,  // 6: job.Job.createTask:input_type -> job.TaskInfo
-	7,  // 7: job.Job.updateTask:input_type -> job.TaskInfo
-	8,  // 8: job.Job.getTaskList:input_type -> job.TaskListReq
-	4,  // 9: job.Job.getTaskById:input_type -> job.IDReq
-	5,  // 10: job.Job.deleteTask:input_type -> job.IDsReq
-	10, // 11: job.Job.createTaskLog:input_type -> job.TaskLogInfo
-	10, // 12: job.Job.updateTaskLog:input_type -> job.TaskLogInfo
-	11, // 13: job.Job.getTaskLogList:input_type -> job.TaskLogListReq
-	4,  // 14: job.Job.getTaskLogById:input_type -> job.IDReq
-	5,  // 15: job.Job.deleteTaskLog:input_type -> job.IDsReq
-	18, // 16: job.Job.getRelayChainList:input_type -> job.RelayChainListReq
-	15, // 17: job.Job.getRelayChainById:input_type -> job.RelayChainIDReq
-	21, // 18: job.Job.getRelayTokenList:input_type -> job.RelayTokenListReq
-	16, // 19: job.Job.getRelayTokenByChainAndId:input_type -> job.RelayTokenKeyReq
-	1,  // 20: job.Job.initDatabase:output_type -> job.BaseResp
-	1,  // 21: job.Job.initRelayTables:output_type -> job.BaseResp
-	0,  // 22: job.Job.createTask:output_type -> job.BaseIDResp
-	1,  // 23: job.Job.updateTask:output_type -> job.BaseResp
-	9,  // 24: job.Job.getTaskList:output_type -> job.TaskListResp
-	7,  // 25: job.Job.getTaskById:output_type -> job.TaskInfo
-	1,  // 26: job.Job.deleteTask:output_type -> job.BaseResp
-	0,  // 27: job.Job.createTaskLog:output_type -> job.BaseIDResp
-	1,  // 28: job.Job.updateTaskLog:output_type -> job.BaseResp
-	12, // 29: job.Job.getTaskLogList:output_type -> job.TaskLogListResp
-	10, // 30: job.Job.getTaskLogById:output_type -> job.TaskLogInfo
-	1,  // 31: job.Job.deleteTaskLog:output_type -> job.BaseResp
-	19, // 32: job.Job.getRelayChainList:output_type -> job.RelayChainListResp
-	17, // 33: job.Job.getRelayChainById:output_type -> job.RelayChainInfo
-	22, // 34: job.Job.getRelayTokenList:output_type -> job.RelayTokenListResp
-	20, // 35: job.Job.getRelayTokenByChainAndId:output_type -> job.RelayTokenInfo
-	20, // [20:36] is the sub-list for method output_type
-	4,  // [4:20] is the sub-list for method input_type
-	4,  // [4:4] is the sub-list for extension type_name
-	4,  // [4:4] is the sub-list for extension extendee
-	0,  // [0:4] is the sub-list for field type_name
+	23, // 4: job.ClientRelayChainListResp.data:type_name -> job.ClientRelayChainInfo
+	26, // 5: job.ClientRelayTokenListResp.data:type_name -> job.ClientRelayTokenInfo
+	3,  // 6: job.Job.initDatabase:input_type -> job.Empty
+	3,  // 7: job.Job.initRelayTables:input_type -> job.Empty
+	7,  // 8: job.Job.createTask:input_type -> job.TaskInfo
+	7,  // 9: job.Job.updateTask:input_type -> job.TaskInfo
+	8,  // 10: job.Job.getTaskList:input_type -> job.TaskListReq
+	4,  // 11: job.Job.getTaskById:input_type -> job.IDReq
+	5,  // 12: job.Job.deleteTask:input_type -> job.IDsReq
+	10, // 13: job.Job.createTaskLog:input_type -> job.TaskLogInfo
+	10, // 14: job.Job.updateTaskLog:input_type -> job.TaskLogInfo
+	11, // 15: job.Job.getTaskLogList:input_type -> job.TaskLogListReq
+	4,  // 16: job.Job.getTaskLogById:input_type -> job.IDReq
+	5,  // 17: job.Job.deleteTaskLog:input_type -> job.IDsReq
+	18, // 18: job.Job.getRelayChainList:input_type -> job.RelayChainListReq
+	15, // 19: job.Job.getRelayChainById:input_type -> job.RelayChainIDReq
+	21, // 20: job.Job.getRelayTokenList:input_type -> job.RelayTokenListReq
+	16, // 21: job.Job.getRelayTokenByChainAndId:input_type -> job.RelayTokenKeyReq
+	3,  // 22: job.Job.getClientRelayChainList:input_type -> job.Empty
+	25, // 23: job.Job.getClientRelayTokenList:input_type -> job.ClientRelayTokenListReq
+	1,  // 24: job.Job.initDatabase:output_type -> job.BaseResp
+	1,  // 25: job.Job.initRelayTables:output_type -> job.BaseResp
+	0,  // 26: job.Job.createTask:output_type -> job.BaseIDResp
+	1,  // 27: job.Job.updateTask:output_type -> job.BaseResp
+	9,  // 28: job.Job.getTaskList:output_type -> job.TaskListResp
+	7,  // 29: job.Job.getTaskById:output_type -> job.TaskInfo
+	1,  // 30: job.Job.deleteTask:output_type -> job.BaseResp
+	0,  // 31: job.Job.createTaskLog:output_type -> job.BaseIDResp
+	1,  // 32: job.Job.updateTaskLog:output_type -> job.BaseResp
+	12, // 33: job.Job.getTaskLogList:output_type -> job.TaskLogListResp
+	10, // 34: job.Job.getTaskLogById:output_type -> job.TaskLogInfo
+	1,  // 35: job.Job.deleteTaskLog:output_type -> job.BaseResp
+	19, // 36: job.Job.getRelayChainList:output_type -> job.RelayChainListResp
+	17, // 37: job.Job.getRelayChainById:output_type -> job.RelayChainInfo
+	22, // 38: job.Job.getRelayTokenList:output_type -> job.RelayTokenListResp
+	20, // 39: job.Job.getRelayTokenByChainAndId:output_type -> job.RelayTokenInfo
+	24, // 40: job.Job.getClientRelayChainList:output_type -> job.ClientRelayChainListResp
+	27, // 41: job.Job.getClientRelayTokenList:output_type -> job.ClientRelayTokenListResp
+	24, // [24:42] is the sub-list for method output_type
+	6,  // [6:24] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_job_proto_init() }
@@ -2003,7 +2328,7 @@ func file_job_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_job_proto_rawDesc), len(file_job_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   23,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

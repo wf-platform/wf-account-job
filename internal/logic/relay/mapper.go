@@ -64,3 +64,31 @@ func toRelayTokenInfo(v *ent.RelayToken) *job.RelayTokenInfo {
 		RawData:          &v.RawData,
 	}
 }
+
+func toClientRelayChainInfo(v *ent.RelayChain) *job.ClientRelayChainInfo {
+	if v == nil {
+		return nil
+	}
+
+	return &job.ClientRelayChainInfo{
+		Id:      v.ID,
+		Name:    v.Name,
+		LogoUrl: v.LogoURL,
+	}
+}
+
+func toClientRelayTokenInfo(v *ent.RelayToken) *job.ClientRelayTokenInfo {
+	if v == nil {
+		return nil
+	}
+
+	return &job.ClientRelayTokenInfo{
+		Id:       v.TokenID,
+		ChainId:  v.ChainID,
+		Name:     v.Name,
+		Symbol:   v.Symbol,
+		LogoUrl:  v.LogoURL,
+		Address:  v.Address,
+		Decimals: int64(v.Decimals),
+	}
+}

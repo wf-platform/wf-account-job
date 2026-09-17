@@ -13,29 +13,34 @@ import (
 )
 
 type (
-	BaseIDResp         = job.BaseIDResp
-	BaseResp           = job.BaseResp
-	BaseUUIDResp       = job.BaseUUIDResp
-	Empty              = job.Empty
-	IDReq              = job.IDReq
-	IDsReq             = job.IDsReq
-	PageInfoReq        = job.PageInfoReq
-	RelayChainIDReq    = job.RelayChainIDReq
-	RelayChainInfo     = job.RelayChainInfo
-	RelayChainListReq  = job.RelayChainListReq
-	RelayChainListResp = job.RelayChainListResp
-	RelayTokenInfo     = job.RelayTokenInfo
-	RelayTokenKeyReq   = job.RelayTokenKeyReq
-	RelayTokenListReq  = job.RelayTokenListReq
-	RelayTokenListResp = job.RelayTokenListResp
-	TaskInfo           = job.TaskInfo
-	TaskListReq        = job.TaskListReq
-	TaskListResp       = job.TaskListResp
-	TaskLogInfo        = job.TaskLogInfo
-	TaskLogListReq     = job.TaskLogListReq
-	TaskLogListResp    = job.TaskLogListResp
-	UUIDReq            = job.UUIDReq
-	UUIDsReq           = job.UUIDsReq
+	BaseIDResp               = job.BaseIDResp
+	BaseResp                 = job.BaseResp
+	BaseUUIDResp             = job.BaseUUIDResp
+	ClientRelayChainInfo     = job.ClientRelayChainInfo
+	ClientRelayChainListResp = job.ClientRelayChainListResp
+	ClientRelayTokenInfo     = job.ClientRelayTokenInfo
+	ClientRelayTokenListReq  = job.ClientRelayTokenListReq
+	ClientRelayTokenListResp = job.ClientRelayTokenListResp
+	Empty                    = job.Empty
+	IDReq                    = job.IDReq
+	IDsReq                   = job.IDsReq
+	PageInfoReq              = job.PageInfoReq
+	RelayChainIDReq          = job.RelayChainIDReq
+	RelayChainInfo           = job.RelayChainInfo
+	RelayChainListReq        = job.RelayChainListReq
+	RelayChainListResp       = job.RelayChainListResp
+	RelayTokenInfo           = job.RelayTokenInfo
+	RelayTokenKeyReq         = job.RelayTokenKeyReq
+	RelayTokenListReq        = job.RelayTokenListReq
+	RelayTokenListResp       = job.RelayTokenListResp
+	TaskInfo                 = job.TaskInfo
+	TaskListReq              = job.TaskListReq
+	TaskListResp             = job.TaskListResp
+	TaskLogInfo              = job.TaskLogInfo
+	TaskLogListReq           = job.TaskLogListReq
+	TaskLogListResp          = job.TaskLogListResp
+	UUIDReq                  = job.UUIDReq
+	UUIDsReq                 = job.UUIDsReq
 
 	Job interface {
 		InitDatabase(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*BaseResp, error)
@@ -58,6 +63,10 @@ type (
 		// RelayToken query
 		GetRelayTokenList(ctx context.Context, in *RelayTokenListReq, opts ...grpc.CallOption) (*RelayTokenListResp, error)
 		GetRelayTokenByChainAndId(ctx context.Context, in *RelayTokenKeyReq, opts ...grpc.CallOption) (*RelayTokenInfo, error)
+		// Client RelayChain query
+		GetClientRelayChainList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ClientRelayChainListResp, error)
+		// Client RelayToken query
+		GetClientRelayTokenList(ctx context.Context, in *ClientRelayTokenListReq, opts ...grpc.CallOption) (*ClientRelayTokenListResp, error)
 	}
 
 	defaultJob struct {
@@ -153,4 +162,16 @@ func (m *defaultJob) GetRelayTokenList(ctx context.Context, in *RelayTokenListRe
 func (m *defaultJob) GetRelayTokenByChainAndId(ctx context.Context, in *RelayTokenKeyReq, opts ...grpc.CallOption) (*RelayTokenInfo, error) {
 	client := job.NewJobClient(m.cli.Conn())
 	return client.GetRelayTokenByChainAndId(ctx, in, opts...)
+}
+
+// Client RelayChain query
+func (m *defaultJob) GetClientRelayChainList(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ClientRelayChainListResp, error) {
+	client := job.NewJobClient(m.cli.Conn())
+	return client.GetClientRelayChainList(ctx, in, opts...)
+}
+
+// Client RelayToken query
+func (m *defaultJob) GetClientRelayTokenList(ctx context.Context, in *ClientRelayTokenListReq, opts ...grpc.CallOption) (*ClientRelayTokenListResp, error) {
+	client := job.NewJobClient(m.cli.Conn())
+	return client.GetClientRelayTokenList(ctx, in, opts...)
 }

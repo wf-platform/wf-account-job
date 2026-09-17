@@ -172,6 +172,35 @@ message RelayTokenListResp {
   repeated RelayTokenInfo data = 2;
 }
 
+message ClientRelayChainInfo {
+  int64 id = 1;
+  string name = 2;
+  string logo_url = 3;
+}
+
+message ClientRelayChainListResp {
+  repeated ClientRelayChainInfo data = 1;
+}
+
+message ClientRelayTokenListReq {
+  int64 chain_id = 1;
+  repeated string ids = 2;
+}
+
+message ClientRelayTokenInfo {
+  string id = 1;
+  int64 chain_id = 2;
+  string name = 3;
+  string symbol = 4;
+  string logo_url = 5;
+  string address = 6;
+  int64 decimals = 7;
+}
+
+message ClientRelayTokenListResp {
+  repeated ClientRelayTokenInfo data = 1;
+}
+
 service Job {
   //  group: base
   rpc initDatabase(Empty) returns (BaseResp);
@@ -209,4 +238,10 @@ service Job {
   rpc getRelayTokenList(RelayTokenListReq) returns (RelayTokenListResp);
   //  group: relay
   rpc getRelayTokenByChainAndId(RelayTokenKeyReq) returns (RelayTokenInfo);
+  //  Client RelayChain query
+  //  group: relay
+  rpc getClientRelayChainList(Empty) returns (ClientRelayChainListResp);
+  //  Client RelayToken query
+  //  group: relay
+  rpc getClientRelayTokenList(ClientRelayTokenListReq) returns (ClientRelayTokenListResp);
 }
