@@ -1,0 +1,5 @@
+# 开发环境配置覆盖项，具体值从 .env.job 文件读取。
+
+Log:
+  Mode: "${JOB_DEV_LOG_MODE}"
+  Level: "${JOB_DEV_LOG_LEVEL}"

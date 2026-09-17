@@ -1,0 +1,17 @@
+# 测试环境配置覆盖项，具体值从 .env.job 文件读取。
+
+ListenOn: "${JOB_TEST_LISTEN_ON}"
+
+Log:
+  Mode: "${JOB_TEST_LOG_MODE}"
+  Path: "${JOB_TEST_LOG_PATH}"
+  Level: "${JOB_TEST_LOG_LEVEL}"
+
+DatabaseConf:
+  DBName: "${JOB_TEST_DATABASE_DB_NAME}"
+
+RedisConf:
+  Db: ${JOB_TEST_REDIS_DB}
+
+Prometheus:
+  Port: ${JOB_TEST_PROMETHEUS_PORT}

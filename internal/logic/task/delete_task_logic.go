@@ -1,0 +1,51 @@
+package task
+
+import (
+	"context"
+
+	"wf-account-job/ent"
+	"wf-account-job/ent/task"
+	"wf-account-job/ent/tasklog"
+	"wf-account-job/internal/svc"
+	"wf-account-job/internal/utils/dberrorhandler"
+	"wf-account-job/internal/utils/entx"
+	"wf-account-job/types/job"
+
+	"github.com/suyuan32/simple-admin-common/i18n"
+	"github.com/zeromicro/go-zero/core/logx"
+)
+
+type DeleteTaskLogic struct {
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
+	logx.Logger
+}
+
+func NewDeleteTaskLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteTaskLogic {
+	return &DeleteTaskLogic{
+		ctx:    ctx,
+		svcCtx: svcCtx,
+		Logger: logx.WithContext(ctx),
+	}
+}
+
+func (l *DeleteTaskLogic) DeleteTask(in *job.IDsReq) (*job.BaseResp, error) {
+	err := entx.WithTx(l.ctx, l.svcCtx.DB, func(tx *ent.Tx) error {
+		_, err := tx.TaskLog.Delete().Where(tasklog.HasTasksWith(task.IDIn(in.Ids...))).Exec(l.ctx)
+		if err != nil {
+			return err
+		}
+
+		_, err = tx.Task.Delete().Where(task.IDIn(in.Ids...)).Exec(l.ctx)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		return nil, dberrorhandler.DefaultEntError(l.Logger, err, in)
+	}
+
+	return &job.BaseResp{Msg: i18n.DeleteSuccess}, nil
+}

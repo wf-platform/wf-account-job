@@ -1,0 +1,17 @@
+# 预发布环境配置覆盖项，具体值从 .env.job 文件读取。
+
+ListenOn: "${JOB_PRE_LISTEN_ON}"
+
+Log:
+  Mode: "${JOB_PRE_LOG_MODE}"
+  Path: "${JOB_PRE_LOG_PATH}"
+  KeepDays: ${JOB_PRE_LOG_KEEP_DAYS}
+
+DatabaseConf:
+  DBName: "${JOB_PRE_DATABASE_DB_NAME}"
+
+RedisConf:
+  Db: ${JOB_PRE_REDIS_DB}
+
+Prometheus:
+  Port: ${JOB_PRE_PROMETHEUS_PORT}

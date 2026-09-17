@@ -1,0 +1,48 @@
+# Job RPC 配置结构，具体值从根目录 .env 和 .env.job 文件读取。
+
+Name: "${JOB_NAME}"
+ListenOn: "${JOB_LISTEN_ON}"
+
+DatabaseConf:
+  Type: "${DATABASE_TYPE}"
+  Host: "${DATABASE_HOST}"
+  Port: ${DATABASE_PORT}
+  DBName: "${JOB_DATABASE_DB_NAME}"
+  Username: "${DATABASE_USERNAME}"
+  Password: "${DATABASE_PASSWORD}"
+  MaxOpenConn: ${DATABASE_MAX_OPEN_CONN}
+  SSLMode: "${DATABASE_SSL_MODE}"
+  CacheTime: ${DATABASE_CACHE_TIME}
+  Debug: ${DATABASE_DEBUG}
+
+RedisConf:
+  Host: "${REDIS_HOST}"
+  Db: ${REDIS_DB}
+  Mode: "${REDIS_MODE}"
+  Username: "${REDIS_USERNAME}"
+  Pass: "${REDIS_PASSWORD}"
+  Tls: ${REDIS_TLS}
+
+Log:
+  ServiceName: "${JOB_LOG_SERVICE_NAME}"
+  Mode: "${JOB_LOG_MODE}"
+  Path: "${JOB_LOG_PATH}"
+  Encoding: "${JOB_LOG_ENCODING}"
+  Level: "${JOB_LOG_LEVEL}"
+  Compress: ${JOB_LOG_COMPRESS}
+  KeepDays: ${JOB_LOG_KEEP_DAYS}
+  StackCoolDownMillis: ${JOB_LOG_STACK_COOLDOWN_MILLIS}
+
+Prometheus:
+  Host: "${JOB_PROMETHEUS_HOST}"
+  Port: ${JOB_PROMETHEUS_PORT}
+  Path: "${JOB_PROMETHEUS_PATH}"
+
+AsynqConf:
+  Enable: ${JOB_ASYNQ_ENABLE}
+  Concurrency: ${JOB_ASYNQ_CONCURRENCY}
+  SyncInterval: ${JOB_ASYNQ_SYNC_INTERVAL}
+
+TaskConf:
+  EnableScheduledTask: ${JOB_ENABLE_SCHEDULED_TASK}
+  EnableDPTask: ${JOB_ENABLE_DP_TASK}

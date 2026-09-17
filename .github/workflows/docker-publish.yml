@@ -1,0 +1,73 @@
+name: Publish Docker image to GHCR
+
+on:
+  push:
+    branches: [ "master" ]
+
+env:
+  REGISTRY: ghcr.io
+  RPC_IMAGE_NAME: ${{ github.repository }}-rpc
+  GO_VERSION: "1.26.0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: true
+
+      - name: Build Linux binary
+        run: make build-linux
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:master
+            network=host
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set image name
+        id: images
+        run: |
+          echo "rpc=${REGISTRY}/${RPC_IMAGE_NAME,,}" >> "$GITHUB_OUTPUT"
+
+      - name: Extract RPC image metadata
+        id: meta_rpc
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.images.outputs.rpc }}
+          tags: |
+            type=raw,value=latest
+
+      - name: Build and push RPC image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta_rpc.outputs.tags }}
+          labels: ${{ steps.meta_rpc.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+          outputs: type=image,name=target,annotation-index.org.opencontainers.image.source=https://github.com/${{ github.repository }}

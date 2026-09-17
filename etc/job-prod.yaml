@@ -1,0 +1,13 @@
+# 生产环境配置覆盖项，具体值从 .env.job 文件读取。
+
+Log:
+  Mode: "${JOB_PROD_LOG_MODE}"
+  Path: "${JOB_PROD_LOG_PATH}"
+  Compress: ${JOB_PROD_LOG_COMPRESS}
+  KeepDays: ${JOB_PROD_LOG_KEEP_DAYS}
+
+DatabaseConf:
+  DBName: "${JOB_PROD_DATABASE_DB_NAME}"
+
+RedisConf:
+  Db: ${JOB_PROD_REDIS_DB}
