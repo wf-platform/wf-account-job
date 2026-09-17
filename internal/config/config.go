@@ -13,9 +13,14 @@ type Config struct {
 	RedisConf    config.RedisConf
 	AsynqConf    asynq.AsynqConf
 	TaskConf     TaskConf
+	RelayConf    RelayConf
 }
 
 type TaskConf struct {
 	EnableScheduledTask bool `json:",default=true"`
 	EnableDPTask        bool `json:",default=true"`
+}
+
+type RelayConf struct {
+	ChainsURL string `json:",default=https://api.relay.link/chains"`
 }

@@ -10,6 +10,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/hibiken/asynq"
@@ -27,13 +28,13 @@ import (
 	"wf-account-job/internal/utils/dberrorhandler"
 )
 
-const relayChainsURL = "https://api.relay.link/chains"
 const relayNativeZeroAddress = "0x0000000000000000000000000000000000000000"
 
 type Handler struct {
-	svcCtx *svc.ServiceContext
-	taskID uint64
-	client *http.Client
+	svcCtx   *svc.ServiceContext
+	taskIDMu sync.Mutex
+	taskID   uint64
+	client   *http.Client
 }
 
 type chainData struct {
@@ -122,6 +123,9 @@ func (h *Handler) ProcessTask(ctx context.Context, _ *asynq.Task) error {
 }
 
 func (h *Handler) ensureTaskID(ctx context.Context) (uint64, error) {
+	h.taskIDMu.Lock()
+	defer h.taskIDMu.Unlock()
+
 	if h.taskID != 0 {
 		return h.taskID, nil
 	}
@@ -216,7 +220,12 @@ func (h *Handler) sync(ctx context.Context) error {
 }
 
 func (h *Handler) fetch(ctx context.Context) ([]interface{}, error) {
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, relayChainsURL, http.NoBody)
+	chainsURL := strings.TrimSpace(h.svcCtx.Config.RelayConf.ChainsURL)
+	if chainsURL == "" {
+		return nil, errors.New("relay chains url is empty")
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, chainsURL, http.NoBody)
 	if err != nil {
 		return nil, err
 	}
@@ -228,17 +237,15 @@ func (h *Handler) fetch(ctx context.Context) ([]interface{}, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("http status code: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("read response body failed: %w", err)
+		body, _ := io.ReadAll(io.LimitReader(resp.Body, 512))
+		return nil, fmt.Errorf("http status code: %d, body: %s", resp.StatusCode, strings.TrimSpace(string(body)))
 	}
 
 	var payload map[string]interface{}
-	if err := json.Unmarshal(body, &payload); err != nil {
-		return nil, fmt.Errorf("json unmarshal failed: %w", err)
+	decoder := json.NewDecoder(resp.Body)
+	decoder.UseNumber()
+	if err := decoder.Decode(&payload); err != nil {
+		return nil, fmt.Errorf("json decode failed: %w", err)
 	}
 
 	chains, ok := payload["chains"].([]interface{})
@@ -366,14 +373,12 @@ func upsertRelayChain(ctx context.Context, tx *ent.Tx, chain chainData) error {
 
 func syncRelayTokens(ctx context.Context, tx *ent.Tx, chainMap map[string]interface{}, chainID int64, chainSupported bool) (int, error) {
 	if !chainSupported {
-		_, err := tx.RelayToken.Update().Where(relaytoken.ChainIDEQ(chainID)).SetSupported(false).Save(ctx)
-		return 0, err
+		return 0, markChainTokensUnsupported(ctx, tx, chainID)
 	}
 
 	tokens, ids := buildRelayTokens(chainMap, chainID, chainSupported)
 	if len(tokens) == 0 {
-		_, err := tx.RelayToken.Update().Where(relaytoken.ChainIDEQ(chainID)).SetSupported(false).Save(ctx)
-		return 0, err
+		return 0, markChainTokensUnsupported(ctx, tx, chainID)
 	}
 
 	successCount := 0
@@ -389,6 +394,14 @@ func syncRelayTokens(ctx context.Context, tx *ent.Tx, chainMap map[string]interf
 	}
 
 	return successCount, nil
+}
+
+func markChainTokensUnsupported(ctx context.Context, tx *ent.Tx, chainID int64) error {
+	_, err := tx.RelayToken.Update().
+		Where(relaytoken.ChainIDEQ(chainID)).
+		SetSupported(false).
+		Save(ctx)
+	return err
 }
 
 func buildRelayTokens(chainMap map[string]interface{}, chainID int64, chainSupported bool) ([]tokenData, []string) {
@@ -740,6 +753,9 @@ func getBoolValue(m map[string]interface{}, key string, defaultValue ...bool) bo
 			return v != 0
 		case int:
 			return v != 0
+		case json.Number:
+			i, err := v.Int64()
+			return err == nil && i != 0
 		}
 	}
 	if len(defaultValue) > 0 {

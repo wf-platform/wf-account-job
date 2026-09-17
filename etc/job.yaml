@@ -46,3 +46,6 @@ AsynqConf:
 TaskConf:
   EnableScheduledTask: ${JOB_ENABLE_SCHEDULED_TASK}
   EnableDPTask: ${JOB_ENABLE_DP_TASK}
+
+RelayConf:
+  ChainsURL: "${JOB_RELAY_CHAINS_URL}"

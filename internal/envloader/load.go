@@ -311,6 +311,7 @@ func defaultValues() map[string]string {
 		"JOB_ASYNQ_SYNC_INTERVAL":       "10",
 		"JOB_ENABLE_SCHEDULED_TASK":     "false",
 		"JOB_ENABLE_DP_TASK":            "true",
+		"JOB_RELAY_CHAINS_URL":          "https://api.relay.link/chains",
 		"JOB_DEV_LOG_MODE":              "console",
 		"JOB_DEV_LOG_LEVEL":             "debug",
 		"JOB_TEST_LISTEN_ON":            "0.0.0.0:9115",
